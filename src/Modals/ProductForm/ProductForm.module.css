@@ -1,0 +1,101 @@
+.formOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.productForm {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.productForm h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #004d40;
+  text-align: center;
+}
+
+.productForm input,
+.productForm textarea {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.productForm input:focus,
+.productForm textarea:focus {
+  border-color: #004d40;
+}
+
+.productForm textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.formActions button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formActions button[type="submit"] {
+  background-color: #004d40;
+  color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+.formActions button[type="submit"]:hover {
+  background-color: #00332d;
+}
+
+.formActions button[type="button"] {
+  background-color: #e0e0e0;
+  color: #333333;
+}
+
+.formActions button[type="button"]:hover {
+  background-color: #bdbdbd;
+}
+
+@media screen and (max-width: 480px) {
+  .productForm {
+    padding: 1.5rem;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}

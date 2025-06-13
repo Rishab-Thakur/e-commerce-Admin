@@ -1,0 +1,118 @@
+.container {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.heading {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.search {
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  width: 60%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.export {
+  padding: 0.6rem 1.2rem;
+  background-color: #004d40;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.export:hover {
+  background-color: #00695c;
+}
+
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.userTable th,
+.userTable td {
+  border: 1px solid #ddd;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.userTable th {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.userTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+.block,
+.unblock {
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+}
+
+.block {
+  background-color: #d32f2f;
+}
+
+.block:hover {
+  background-color: #b71c1c;
+}
+
+.unblock {
+  background-color: #388e3c;
+}
+
+.unblock:hover {
+  background-color: #2e7d32;
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.topControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.searchInput {
+  padding: 0.5rem;
+  width: 250px;
+}
+
+.statusFilter {
+  padding: 0.5rem;
+  min-width: 150px;
+}
+
+.export {
+  margin-left: auto;
+  background-color: #ff9800;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+}
