@@ -8,6 +8,15 @@ import type {
   BlockUserResponse,
 } from "../Interface/UserServiceInterfaces";
 
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const UsersAPI = {
   getAll: (params?: GetAllUsersRequest) =>
     api.get<GetAllUsersResponse>("/users", { params }),

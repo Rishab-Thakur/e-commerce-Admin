@@ -15,7 +15,6 @@ const initialState: ProductState = {
   error: null,
 };
 
-// Fetch all products
 export const fetchProducts = createAsyncThunk("products/fetch", async (_, thunkAPI) => {
   try {
     const response = await ProductsAPI.getAll();
@@ -25,7 +24,7 @@ export const fetchProducts = createAsyncThunk("products/fetch", async (_, thunkA
   }
 });
 
-// Add product
+
 export const addProduct = createAsyncThunk<Product, Omit<Product, "id">>(
   "products/add",
   async (newProduct, thunkAPI) => {
@@ -41,7 +40,6 @@ export const addProduct = createAsyncThunk<Product, Omit<Product, "id">>(
 );
 
 
-// Update product
 export const updateProduct = createAsyncThunk(
   "products/update",
   async (updatedProduct: Product, thunkAPI) => {

@@ -9,7 +9,6 @@ export const api = axios.create({
   },
 });
 
-// Add token to headers automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
@@ -61,15 +60,4 @@ export const OrdersAPI = {
   cancelOrder: (orderId: string) => api.post("/order/cancel", { orderId }),
 };
 
-// export const UsersAPI = {
-//   getAll: (params?: {
-//     page?: number;
-//     limit?: number;
-//   }) => api.get("/users", { params }), 
 
-//   search: (query: string) =>
-//     api.get(`/users/search?query=${encodeURIComponent(query)}`),
-
-//   block: (id: string) => api.put(`/users/block/${id}`),
-//   unblock: (id: string) => api.put(`/users/unblock/${id}`),
-// };

@@ -12,7 +12,6 @@ interface AuthState {
   error: string | null;
 }
 
-// ✅ Safe localStorage parsing for user
 let parsedUser: LoginCredentials | null = null;
 try {
   const storedUser = localStorage.getItem("adminUser");
@@ -32,7 +31,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// ✅ Login Thunk
 export const loginUser = createAsyncThunk(
   "admin/login",
   async (
@@ -45,13 +43,11 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       const res = await AuthAPI.login({ email, password, deviceId });
-      console.log(res.data.accessToken);
       const { accessToken, refreshToken } = res.data.tokens;
       const { user } = res.data.admin;
       localStorage.setItem("adminUser", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      console.log(user, accessToken, refreshToken); 
       return { user, accessToken, refreshToken };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -61,7 +57,6 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// ✅ Logout Thunk
 export const logoutUser = createAsyncThunk("admin/logout", async () => {
   localStorage.removeItem("adminUser");
   localStorage.removeItem("accessToken");

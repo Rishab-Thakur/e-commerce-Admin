@@ -15,7 +15,6 @@ const initialState: OrderState = {
   error: null,
 };
 
-// GET: Orders List
 export const fetchOrders = createAsyncThunk("admin/order", async (_, thunkAPI) => {
   try {
     const res = await OrdersAPI.getAll();

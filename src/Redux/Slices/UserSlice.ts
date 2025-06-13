@@ -86,7 +86,6 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -104,7 +103,6 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // Block
       .addCase(blockUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
         state.users = state.users.map((user) =>
@@ -112,7 +110,6 @@ const userSlice = createSlice({
         );
       })
 
-      // Unblock
       .addCase(unblockUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
         state.users = state.users.map((user) =>

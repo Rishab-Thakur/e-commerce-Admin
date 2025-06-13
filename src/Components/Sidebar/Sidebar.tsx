@@ -12,6 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../Redux/Store";
 import { logoutUser } from "../../Redux/Slices/AuthSlice";
+import { ROUTES } from "../../Constants/Routes";
 
 export interface SidebarProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate("/login");
+    navigate(ROUTES.LOGIN);
   };
 
   return (

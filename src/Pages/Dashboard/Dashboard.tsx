@@ -24,10 +24,6 @@ const Dashboard: React.FC = () => {
   // if (loading) return <Loader text={"Loading Data..."} />;
   // if (error) return <div className={styles.error}>{error}</div>;
 
-  const token = localStorage.getItem("accessToken");
-  console.log(token);
-
-
   return (
     loading ? <Loader text={"Loading Data..."} /> : error ? <div className={styles.error}>{error}</div> :
       <div className={styles.dashboard}>
