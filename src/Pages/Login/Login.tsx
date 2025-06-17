@@ -1,20 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Login.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Redux/Slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../Redux/Store";
+import { v4 as uuidv4 } from "uuid";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("mahi.rajput@appinventiv.com");
-  const [password, setPassword] = useState("12345678");
+  const [password, setPassword] = useState("123456789");
+  const [deviceId, setDeviceId] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
+  useEffect(() => {
+    let id = localStorage.getItem("deviceId");
+    if (!id) {
+      id = uuidv4(); 
+      localStorage.setItem("deviceId", id);
+    }
+    setDeviceId(id);
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const deviceId = navigator.userAgent;
     const result = await dispatch(loginUser({ email, password, deviceId }));
     if (loginUser.fulfilled.match(result)) {
       navigate("/dashboard");
@@ -24,13 +34,12 @@ const Login: React.FC = () => {
   return (
     <div className={styles.loginContainer}>
       <form className={styles.loginForm} onSubmit={handleLogin}>
-        <h2>Admin Login</h2>
-
-        {error && <p className={styles.error}>{error}</p>}
+        <h2 className={styles.title}>Admin Login</h2>
 
         <div className={styles.formGroup}>
-          <label>Email</label>
+          <label htmlFor="email">Email</label>
           <input
+            id="email"
             type="email"
             placeholder="admin@example.com"
             value={email}
@@ -40,8 +49,9 @@ const Login: React.FC = () => {
         </div>
 
         <div className={styles.formGroup}>
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
           <input
+            id="password"
             type="password"
             placeholder="********"
             value={password}
@@ -49,6 +59,8 @@ const Login: React.FC = () => {
             required
           />
         </div>
+
+          {error && <p className={styles.error}>{error}</p>}
 
         <button type="submit" className={styles.loginButton} disabled={loading}>
           {loading ? "Logging in..." : "Login"}

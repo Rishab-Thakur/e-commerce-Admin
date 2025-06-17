@@ -24,8 +24,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logoutUser());
     navigate(ROUTES.LOGIN);
+    dispatch(logoutUser());
   };
 
   return (

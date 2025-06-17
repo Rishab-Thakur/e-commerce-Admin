@@ -1,10 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AuthAPI } from "../../API/Index";
-import type { LoginCredentials } from "../../Interface/LoginCredentials";
+import { AuthAPI } from "../../API/AuthAPI";
+import type {
+  LoginRequest,
+  LogoutRequest,
+} from "../../Interface/AuthServiceInterfaces";
 import type { RootState } from "../Store";
 
 interface AuthState {
-  user: LoginCredentials | null;
+  user: {
+    email: string;
+    role: string;
+    deviceId?: string;
+  } | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -12,7 +19,7 @@ interface AuthState {
   error: string | null;
 }
 
-let parsedUser: LoginCredentials | null = null;
+let parsedUser: AuthState["user"] | null = null;
 try {
   const storedUser = localStorage.getItem("adminUser");
   if (storedUser && storedUser !== "undefined") {
@@ -31,37 +38,53 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const loginUser = createAsyncThunk(
-  "admin/login",
-  async (
-    {
-      email,
-      password,
-      deviceId,
-    }: { email: string; password: string; deviceId: string },
-    thunkAPI
-  ) => {
+export const loginUser = createAsyncThunk<
+  { user: AuthState["user"]; accessToken: string; refreshToken: string },
+  LoginRequest,
+  { rejectValue: string }
+>("admin/login", async ({ email, password, deviceId }, thunkAPI) => {
+  try {
+    const res = await AuthAPI.login({ email, password, deviceId });
+    const { tokens, admin } = res.data;
+
+    const user = {
+      email: admin.email,
+      role: admin.role,
+      deviceId: admin.deviceId,
+    };
+
+    localStorage.setItem("adminUser", JSON.stringify(user));
+    localStorage.setItem("accessToken", tokens.accessToken);
+    localStorage.setItem("refreshToken", tokens.refreshToken);
+
+    return {
+      user,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error?.response?.data?.message || "Login failed"
+    );
+  }
+});
+
+export const logoutUser = createAsyncThunk<void, void, { state: RootState }>(
+  "admin/logout",
+  async (_, thunkAPI) => {
     try {
-      const res = await AuthAPI.login({ email, password, deviceId });
-      const { accessToken, refreshToken } = res.data.tokens;
-      const { user } = res.data.admin;
-      localStorage.setItem("adminUser", JSON.stringify(user));
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      return { user, accessToken, refreshToken };
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Login failed"
-      );
+      const token = thunkAPI.getState().auth.accessToken;
+      if (token) {
+        await AuthAPI.logout({ accessToken: token } as LogoutRequest);
+      }
+    } catch {
+    } finally {
+      localStorage.removeItem("adminUser");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     }
   }
 );
-
-export const logoutUser = createAsyncThunk("admin/logout", async () => {
-  localStorage.removeItem("adminUser");
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-});
 
 const authSlice = createSlice({
   name: "auth",
@@ -82,9 +105,10 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload ?? "Login failed";
         state.isAuthenticated = false;
       })
+
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
