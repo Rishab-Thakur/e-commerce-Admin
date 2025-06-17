@@ -7,101 +7,146 @@ import {
   deleteProduct,
 } from "../../Redux/Slices/ProductSlice";
 import type { Product } from "../../Interface/Product";
-import ProductForm from "../../Modals/ProductForm/ProductForm";
 import Loader from "../../Components/Loader/Loader";
+import Pagination from "../../Components/Pagination/Pagination";
+import ProductForm from "../../Modals/ProductForm/ProductForm";
+import DeleteConfirmModal from "../../Modals/Confirm/DeleteConfirm";
 
 const Products: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { products, loading, error } = useSelector((state: RootState) => state.products);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const { products, loading, error, total, page, pageSize } = useSelector(
+    (state: RootState) => state.products
+  );
+
+
+  const [currentPage, setCurrentPage] = useState<number>(page || 1);
+  const [modalType, setModalType] = useState<"add" | "edit" | "view" | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    dispatch(fetchProducts({ page: currentPage }));
+  }, [dispatch, currentPage]);
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setShowForm(true);
+  const openModal = (type: "add" | "edit" | "view", product?: Product) => {
+    setSelectedProduct(product || null);
+    setModalType(type);
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      dispatch(deleteProduct(id));
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedProduct(null);
+  };
+
+
+  const handleDelete = async () => {
+    if (productIdToDelete) {
+      await dispatch(deleteProduct(productIdToDelete));
+      setShowDeleteModal(false);
+      setProductIdToDelete(null);
     }
   };
 
-  const handleAdd = () => {
-    setEditingProduct(null);
-    setShowForm(true);
+  const confirmDelete = (id: string) => {
+    setProductIdToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
   };
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Products</h2>
-      <button className={styles.edit} onClick={handleAdd}>
-        Add Product
-      </button>
+      <div className={styles.header}>
+        <h2>Product Management</h2>
+        <button className={styles.addButton} onClick={() => openModal("add")}>
+          + Add Product
+        </button>
+      </div>
 
-      {loading && <Loader />}
-      {error && <p className={styles.error}>{error}</p>}
+      {loading ? (
+        <Loader text="Loading Products..." />
+      ) : error ? (
+        <p className={styles.error}>{error}</p>
+      ) : (
+        <>
+          <table className={styles.productTable}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Stock</th>
+                {/* <th>Variants</th> */}
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product: Product) => (
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>{product.brand}</td>
+                  <td>₹{product.price}</td>
+                  <td>{product.totalStock}</td>
+                  {/* <td>
+                    {product.variants.map((variant) => (
+                      <div key={variant.id}>
+                        <span>
+                          {variant.size} / {variant.color} - {variant.stock}
+                        </span>
+                      </div>
+                    ))}
+                  </td> */}
+                  <td className={styles.actions}>
+                    <button
+                      className={styles.viewBtn}
+                      onClick={() => openModal("view", product)}
+                    >
+                      View
+                    </button>
+                    <button
+                      className={styles.editBtn}
+                      onClick={() => openModal("edit", product)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={() => confirmDelete(product.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {showForm && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(total / (pageSize || 1))}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
+
+      {modalType && (
         <ProductForm
-          existingProduct={editingProduct}
-          onClose={() => setShowForm(false)}
+          mode={modalType}
+          product={selectedProduct}
+          onClose={closeModal}
         />
       )}
 
-      {!loading && !error && products.length === 0 && (
-        <p className={styles.error}>No products found.</p>
-      )}
-
-      {!loading && !error && products.length > 0 && (
-        <table className={styles.productTable}>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Brand</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {products.map((product: Product) => (
-              <tr key={product.id}>
-                <td>
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className={styles.image}
-                  />
-                </td>
-                <td>{product.name}</td>
-                <td>{product.brand}</td>
-                <td>₹{product.price}</td>
-                <td>{product.totalStock}</td>
-                <td>
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className={styles.edit}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className={styles.delete}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {showDeleteModal && (
+        <DeleteConfirmModal
+          isOpen={showDeleteModal}
+          message="Are you sure you want to delete this product?"
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteModal(false)}
+        />
       )}
     </div>
   );

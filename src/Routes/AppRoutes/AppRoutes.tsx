@@ -9,15 +9,22 @@ import Orders from "../../Pages/Orders/Orders";
 import Users from "../../Pages/Users/Users";
 import NotFound from "../../Pages/NotFound/NotFound";
 import MainLayout from "../../Layouts/MainLayout";
+
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import PublicRoute from "../PublicRoutes/PublicRoutes";
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route
+        path={ROUTES.LOGIN}
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
 
-      {/* Protected Routes */}
       <Route element={<MainLayout />}>
         <Route
           path={ROUTES.DASHBOARD}
@@ -52,12 +59,13 @@ const AppRoutes: React.FC = () => {
           }
         />
 
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Default redirect to dashboard */}
+        <Route path="/" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Route>
 
+      {/* 404 Route */}
       <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
     </Routes>
-
   );
 };
 

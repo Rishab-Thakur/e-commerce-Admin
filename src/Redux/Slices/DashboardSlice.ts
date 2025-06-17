@@ -16,18 +16,19 @@ export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
   async (_, thunkAPI) => {
     try {
-      const [products, orders, users, revenue] = await Promise.all([
-        DashboardAPI.getTotalProducts(),
-        DashboardAPI.getTotalOrders(),
-        DashboardAPI.getTotalUsers(),
-        DashboardAPI.getTotalRevenue(),
-      ]);
+      // const [products, orders, users, revenue] = await Promise.all([
+      //   // DashboardAPI.getTotalProducts(),
+      //   // DashboardAPI.getTotalOrders(),
+      //   // DashboardAPI.getTotalUsers(),
+      //   // DashboardAPI.getTotalRevenue(),
+      // ]);
+      const stats = await DashboardAPI.getStats();
 
       return {
-        totalProducts: products.data.total || 0,
-        totalOrders: orders.data.total || 0,
-        totalUsers: users.data.total || 0,
-        totalRevenue: revenue.data.total || 0,
+        totalProducts: stats.data.totalProducts || 0,
+        totalOrders: stats.data.totalOrders || 0,
+        totalUsers: stats.data.totalUsers || 0,
+        totalRevenue: stats.data.totalRevenue|| 0,
       };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to load dashboard data");
