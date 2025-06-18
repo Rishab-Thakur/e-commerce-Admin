@@ -16,12 +16,6 @@ export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
   async (_, thunkAPI) => {
     try {
-      // const [products, orders, users, revenue] = await Promise.all([
-      //   // DashboardAPI.getTotalProducts(),
-      //   // DashboardAPI.getTotalOrders(),
-      //   // DashboardAPI.getTotalUsers(),
-      //   // DashboardAPI.getTotalRevenue(),
-      // ]);
       const stats = await DashboardAPI.getStats();
 
       return {

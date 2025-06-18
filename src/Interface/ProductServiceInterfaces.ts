@@ -61,9 +61,9 @@ export interface ProductData {
   price: number;
   totalStock: number;
   variants: Variant[];
-  category?: string;
-  subCategory?: string;
-  gender?: string;
+  category: string;
+  subCategory: string;
+  gender: string;
 }
 
 export interface ListProductsResponse {
@@ -77,6 +77,6 @@ export interface Response {
   code: number;
   status: string;
   timestamp: string;
-  data: string; // stringified JSON
+  data: string; 
   error: string;
 }

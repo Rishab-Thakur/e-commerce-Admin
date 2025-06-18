@@ -102,6 +102,9 @@ const Users: React.FC = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className={styles.searchInput}
         />
+        <button onClick={handleSearchClick} className={styles.searchButton}>
+          Search
+        </button>
         <select
           className={styles.filter}
           value={statusFilter}
@@ -112,9 +115,7 @@ const Users: React.FC = () => {
           <option value="inactive">Inactive</option>
           <option value="block">Blocked</option>
         </select>
-        <button onClick={handleSearchClick} className={styles.searchButton}>
-          Search
-        </button>
+
       </div>
 
       {loading ? (
@@ -131,7 +132,7 @@ const Users: React.FC = () => {
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Role</th>
+                  <th>Phone</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -141,12 +142,11 @@ const Users: React.FC = () => {
                   <tr key={user.id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
-                    <td>{user.role}</td>
+                    <td>{user.phone}</td>
                     <td>
                       <span
-                        className={`${styles.statusBadge} ${
-                          styles[user.status]
-                        }`}
+                        className={`${styles.statusBadge} ${styles[user.status]
+                          }`}
                       >
                         {user.status}
                       </span>
