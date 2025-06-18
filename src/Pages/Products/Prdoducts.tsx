@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./Products.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
@@ -6,11 +6,11 @@ import {
   fetchProducts,
   deleteProduct,
 } from "../../Redux/Slices/ProductSlice";
-import type { Product } from "../../Interface/Product";
 import Loader from "../../Components/Loader/Loader";
 import Pagination from "../../Components/Pagination/Pagination";
 import ProductForm from "../../Modals/ProductForm/ProductForm";
 import DeleteConfirmModal from "../../Modals/Confirm/DeleteConfirm";
+import type { ProductData } from "../../Interface/ProductServiceInterfaces";
 
 const Products: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,15 +21,16 @@ const Products: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
   const [modalType, setModalType] = useState<"add" | "edit" | "view" | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     dispatch(fetchProducts({ page: currentPage }));
   }, [dispatch, currentPage]);
 
-  const openModal = (type: "add" | "edit" | "view", product?: Product) => {
+  const openModal = (type: "add" | "edit" | "view", product?: ProductData) => {
     setSelectedProduct(product || null);
     setModalType(type);
   };
@@ -53,9 +54,28 @@ const Products: React.FC = () => {
     setShowDeleteModal(true);
   };
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
+  const handlePageChange = useCallback(
+    (newPage: number) => setCurrentPage(newPage),
+    []
+  );
+
+  const refreshUsers = () => {
+    if (searchQuery) {
+      dispatch(
+        fetchProducts({
+          name: searchQuery,
+        })
+      );
+    } else {
+      dispatch(fetchProducts({ page: currentPage }));
+    }
   };
+
+  const handleSearchClick = () => {
+    setCurrentPage(1);
+    refreshUsers();
+  };
+
 
   return (
     <div className={styles.container}>
@@ -63,6 +83,19 @@ const Products: React.FC = () => {
         <h2>Product Management</h2>
         <button className={styles.addButton} onClick={() => openModal("add")}>
           + Add Product
+        </button>
+      </div>
+
+      <div className={styles.controls}>
+        <input
+          type="text"
+          placeholder="Search by Product Name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchInput}
+        />
+        <button onClick={handleSearchClick} className={styles.searchButton}>
+          Search
         </button>
       </div>
 
@@ -79,26 +112,16 @@ const Products: React.FC = () => {
                 <th>Brand</th>
                 <th>Price</th>
                 <th>Stock</th>
-                {/* <th>Variants</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product: Product) => (
+              {products?.map((product: ProductData) => (
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td>{product.brand}</td>
                   <td>₹{product.price}</td>
                   <td>{product.totalStock}</td>
-                  {/* <td>
-                    {product.variants.map((variant) => (
-                      <div key={variant.id}>
-                        <span>
-                          {variant.size} / {variant.color} - {variant.stock}
-                        </span>
-                      </div>
-                    ))}
-                  </td> */}
                   <td className={styles.actions}>
                     <button
                       className={styles.viewBtn}

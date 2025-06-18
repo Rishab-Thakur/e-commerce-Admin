@@ -12,6 +12,7 @@ import type {
 } from "../../Interface/ProductServiceInterfaces";
 import { toast } from "react-toastify";
 
+
 interface ProductFormProps {
   mode: "add" | "edit" | "view";
   product?: ProductData | null;
@@ -37,20 +38,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
   });
 
   const [imageType, setImageType] = useState<"file" | "url">("file");
-  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (product && (mode === "edit" || mode === "view")) {
       setForm({
-        name: product.name,
-        category: product.category || "",
-        subCategory: product.subCategory || "",
-        gender: product.gender || "",
-        brand: product.brand,
-        imageUrl: product.imageUrl,
-        description: product.description,
-        price: product.price,
-        variants: product.variants || [defaultVariant],
+        name: product?.name,
+        category: product?.category || "",
+        subCategory: product?.subCategory || "",
+        gender: product?.gender ?? "",
+        brand: product?.brand ?? "",
+        imageUrl: product?.imageUrl ?? "",
+        description: product?.description ?? "",
+        price: product?.price,
+        variants: product?.variants || [defaultVariant],
       });
     }
   }, [product, mode]);
@@ -126,9 +126,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
               : "View Product"}
         </h2>
         <form className={styles.form} onSubmit={handleSubmit}>
-          {mode === "add" &&
-            <div className={styles.imageSection}>
-              <label className={styles.label}>Product Image</label>
+
+          <div className={styles.imageSection}>
+            <label className={styles.label}>Product Image</label>
+            {mode === "add" &&
               <div className={styles.imageInputGroup}>
                 <select
                   value={imageType}
@@ -176,25 +177,26 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   />
                 )}
               </div>
+            }
 
-              {form.imageUrl && (
-                <div className={styles.imagePreview}>
-                  <img src={form.imageUrl} alt="Product" />
-                  {!isView && (
-                    <button
-                      type="button"
-                      className={styles.removeImageBtn}
-                      onClick={() => {
-                        setForm((prev) => ({ ...prev, imageUrl: "" }));
-                      }}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          }
+            {form.imageUrl && (
+              <div className={styles.imagePreview}>
+                <img src={form.imageUrl} alt="Product" />
+                {!isView && (
+                  <button
+                    type="button"
+                    className={styles.removeImageBtn}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, imageUrl: "" }));
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
 
           <div className={styles.grid}>
             <div>
