@@ -5,21 +5,23 @@ import type { RootState } from "../../Redux/Store";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
+  isOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar, isOpen }) => {
   const user = useSelector((state: RootState) => state.auth.user);
+  console.log({ onToggleSidebar });
 
   return (
     <header className={styles.header}>
       <div className={styles.left}>
-        <button className={styles.menuIcon} onClick={onToggleSidebar}>
+        {!isOpen && <button className={styles.menuIcon} onClick={onToggleSidebar} >
           ☰
-        </button>
-        <div className={styles.logo}>🛍️ Admin Panel</div>
+        </button>}
+        <div className={styles.logo}>🛍️ Wyntra Admin Panel</div>
       </div>
 
-      {user && <div className={styles.username}>Welcome, Admin</div>}
+      {user && <div className={styles.username}>Welcome Admin</div>}
     </header>
   );
 };

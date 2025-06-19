@@ -38,6 +38,7 @@ const initialState: AuthState = {
   error: null,
 };
 
+
 export const loginUser = createAsyncThunk<
   { user: AuthState["user"]; accessToken: string; refreshToken: string },
   LoginRequest,

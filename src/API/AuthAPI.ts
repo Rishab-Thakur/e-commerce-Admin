@@ -1,4 +1,4 @@
-import { api } from "./Index"; 
+import { api, loginApi } from "./Index"; 
 import type  {
   LoginRequest,
   LoginResponses,
@@ -8,7 +8,7 @@ import type  {
 
 export const AuthAPI = {
   login: (credentials: LoginRequest) =>
-    api.post<LoginResponses>("/login", credentials),
+    loginApi.post<LoginResponses>("/login", credentials),
 
   forgetPassword: (email: string) =>
     api.post("/forget-password", { email }),

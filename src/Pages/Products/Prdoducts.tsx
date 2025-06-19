@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import styles from "./Products.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
@@ -18,7 +18,6 @@ const Products: React.FC = () => {
     (state: RootState) => state.products
   );
 
-
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
   const [modalType, setModalType] = useState<"add" | "edit" | "view" | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
@@ -30,52 +29,51 @@ const Products: React.FC = () => {
     dispatch(fetchProducts({ page: currentPage }));
   }, [dispatch, currentPage]);
 
-  const openModal = (type: "add" | "edit" | "view", product?: ProductData) => {
+  const openModal = useCallback((type: "add" | "edit" | "view", product?: ProductData) => {
     setSelectedProduct(product || null);
     setModalType(type);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setModalType(null);
     setSelectedProduct(null);
-  };
+  }, []);
 
+  const confirmDelete = useCallback((id: string) => {
+    setProductIdToDelete(id);
+    setShowDeleteModal(true);
+  }, []);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (productIdToDelete) {
       await dispatch(deleteProduct(productIdToDelete));
       setShowDeleteModal(false);
       setProductIdToDelete(null);
     }
-  };
+  }, [dispatch, productIdToDelete]);
 
-  const confirmDelete = (id: string) => {
-    setProductIdToDelete(id);
-    setShowDeleteModal(true);
-  };
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+  }, []);
 
-  const handlePageChange = useCallback(
-    (newPage: number) => setCurrentPage(newPage),
-    []
-  );
-
-  const refreshUsers = () => {
+  const refreshProducts = useCallback(() => {
     if (searchQuery) {
-      dispatch(
-        fetchProducts({
-          name: searchQuery,
-        })
-      );
+      dispatch(fetchProducts({ name: searchQuery }));
     } else {
       dispatch(fetchProducts({ page: currentPage }));
     }
-  };
+  }, [dispatch, searchQuery, currentPage]);
 
-  const handleSearchClick = () => {
+  const handleSearchClick = useCallback(() => {
     setCurrentPage(1);
-    refreshUsers();
-  };
+    refreshProducts();
+  }, [refreshProducts]);
 
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const totalPages = useMemo(() => Math.ceil(total / (pageSize || 1)), [total, pageSize]);
 
   return (
     <div className={styles.container}>
@@ -91,7 +89,7 @@ const Products: React.FC = () => {
           type="text"
           placeholder="Search by Product Name"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           className={styles.searchInput}
         />
         <button onClick={handleSearchClick} className={styles.searchButton}>
@@ -149,7 +147,7 @@ const Products: React.FC = () => {
 
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(total / (pageSize || 1))}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
           />
         </>

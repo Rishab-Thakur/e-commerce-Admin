@@ -1,19 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import styles from "./Dashboard.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import { fetchDashboardStats } from "../../Redux/Slices/DashboardSlice";
 import Loader from "../../Components/Loader/Loader";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const { totalOrders, totalProducts, totalUsers, totalRevenue, loading, error } = useSelector(
-    (state: RootState) => state.dashboard
+    (state: RootState) => state.dashboard,
+    shallowEqual
   );
 
   useEffect(() => {
     dispatch(fetchDashboardStats());
   }, [dispatch]);
+
+  const cards = useMemo(
+    () => [
+      { title: "Products", value: totalProducts },
+      { title: "Orders", value: totalOrders },
+      { title: "Users", value: totalUsers },
+      { title: "Revenue", value: `₹${totalRevenue}` },
+    ],
+    [totalOrders, totalProducts, totalUsers, totalRevenue]
+  );
 
   return (
     <div className={styles.dashboard}>
@@ -25,22 +37,12 @@ const Dashboard: React.FC = () => {
         <>
           <h1 className={styles.title}>Admin Dashboard</h1>
           <div className={styles.cards}>
-            <div className={styles.card}>
-              <h3>Products</h3>
-              <p>{totalProducts}</p>
-            </div>
-            <div className={styles.card}>
-              <h3>Orders</h3>
-              <p>{totalOrders}</p>
-            </div>
-            <div className={styles.card}>
-              <h3>Users</h3>
-              <p>{totalUsers}</p>
-            </div>
-            <div className={styles.card}>
-              <h3>Revenue</h3>
-              <p>₹{totalRevenue}</p>
-            </div>
+            {cards.map((card, index) => (
+              <div className={styles.card} key={index}>
+                <h3>{card.title}</h3>
+                <p>{card.value}</p>
+              </div>
+            ))}
           </div>
         </>
       )}

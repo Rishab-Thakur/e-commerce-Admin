@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./Login.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { loginUser } from "../../Redux/Slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../Redux/Store";
@@ -10,26 +10,42 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("mahi.rajput@appinventiv.com");
   const [password, setPassword] = useState("123456789");
   const [deviceId, setDeviceId] = useState("");
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  const { loading, error } = useSelector(
+    (state: RootState) => state.auth,
+    shallowEqual
+  );
 
   useEffect(() => {
     let id = localStorage.getItem("deviceId");
     if (!id) {
-      id = uuidv4(); 
+      id = uuidv4();
       localStorage.setItem("deviceId", id);
     }
     setDeviceId(id);
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = await dispatch(loginUser({ email, password, deviceId }));
-    if (loginUser.fulfilled.match(result)) {
-      navigate("/dashboard");
-    }
-  };
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  }, []);
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }, []);
+
+  const handleLogin = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const result = await dispatch(loginUser({ email, password, deviceId }));
+      if (loginUser.fulfilled.match(result)) {
+        navigate("/dashboard");
+      }
+    },
+    [email, password, deviceId, dispatch, navigate]
+  );
 
   return (
     <div className={styles.loginContainer}>
@@ -43,7 +59,7 @@ const Login: React.FC = () => {
             type="email"
             placeholder="admin@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             required
           />
         </div>
@@ -55,12 +71,12 @@ const Login: React.FC = () => {
             type="password"
             placeholder="********"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             required
           />
         </div>
 
-          {error && <p className={styles.error}>{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <button type="submit" className={styles.loginButton} disabled={loading}>
           {loading ? "Logging in..." : "Login"}

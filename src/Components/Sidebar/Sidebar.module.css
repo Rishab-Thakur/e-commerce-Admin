@@ -61,6 +61,10 @@
   cursor: pointer;
 }
 
+  .closeButtonWrapper {
+    display: flex;
+  }
+
 @media (max-width: 768px) {
   .sidebar {
     height: 100vh;
