@@ -4,7 +4,6 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
   ProductFilter,
-  // UpdateInventoryRequest,
   Variant,
   ProductData,
 } from "../../Interface/ProductServiceInterfaces";
@@ -14,9 +13,9 @@ export interface Product {
   id: string;
   name: string;
   brand: string;
-  category?: string;
-  subCategory?: string;
-  gender?: string;
+  category: string;
+  subCategory: string;
+  gender: string;
   imageUrl: string;
   description: string;
   price: number;
@@ -26,7 +25,6 @@ export interface Product {
 
 interface ProductState {
   products: ProductData[];
-  // selectedProduct: Product | null;
   loading: boolean;
   error: string | null;
   total: number;
@@ -36,7 +34,6 @@ interface ProductState {
 
 const initialState: ProductState = {
   products: [],
-  // selectedProduct: null,
   loading: false,
   error: null,
   total: 0,
@@ -56,19 +53,6 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
-
-// export const getProduct = createAsyncThunk(
-//   "products/getOne",
-//   async (id: string, thunkAPI) => {
-//     try {
-//       const res = await ProductAPI.getProduct(id);
-//       const product = JSON.parse(res.data.data) as Product;
-//       return product;
-//     } catch (error: any) {
-//       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch product");
-//     }
-//   }
-// );
 
 export const createProduct = createAsyncThunk(
   "products/create",
@@ -106,24 +90,12 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
-// export const updateInventory = createAsyncThunk(
-//   "products/updateInventory",
-//   async (data: UpdateInventoryRequest, thunkAPI) => {
-//     try {
-//       await ProductAPI.updateInventory(data);
-//       thunkAPI.dispatch(fetchProducts({}));
-//     } catch (error: any) {
-//       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to update inventory");
-//     }
-//   }
-// );
 
 
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
@@ -141,13 +113,7 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // .addCase(getProduct.fulfilled, (state, action) => {
-      //   state.selectedProduct = action.payload;
-      // })
-      // .addCase(getProduct.rejected, (state, action) => {
-      //   state.selectedProduct = null;
-      //   state.error = action.payload as string;
-      // });
+
   },
 });
 

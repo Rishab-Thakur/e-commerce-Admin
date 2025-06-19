@@ -12,6 +12,7 @@ import MainLayout from "../../Layouts/MainLayout";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import PublicRoute from "../PublicRoutes/PublicRoutes";
+import ForgotPassword from "../../Pages/ForgetPassword/ForgetPassword";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -24,6 +25,14 @@ const AppRoutes: React.FC = () => {
           </PublicRoute>
         }
       />
+       <Route
+          path={ROUTES.FORGOT_PASSWORD}
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
 
       <Route element={<MainLayout />}>
         <Route

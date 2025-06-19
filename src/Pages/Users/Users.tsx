@@ -68,9 +68,13 @@ const Users: React.FC = () => {
     setCurrentPage(newPage);
   }, []);
 
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  }, []);
+const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  if (value.trim() === "") {
+    dispatch(fetchUsers({ page: 1 }));
+  }
+}, [dispatch]);
 
   const exportToCSV = useCallback(() => {
     const csv = users

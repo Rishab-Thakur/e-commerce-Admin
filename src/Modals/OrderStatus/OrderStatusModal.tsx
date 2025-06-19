@@ -8,14 +8,12 @@ interface OrderStatusModalProps {
 }
 
 const OrderStatusModal: React.FC<OrderStatusModalProps> = ({
-  orderId,
   currentStatus,
   onClose,
 }) => {
   const [status, setStatus] = useState(currentStatus);
 
   const handleUpdate = () => {
-    console.log(`Order ${orderId} updated to ${status}`);
     onClose();
   };
 

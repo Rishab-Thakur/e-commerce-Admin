@@ -5,9 +5,10 @@ import { loginUser } from "../../Redux/Slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import { v4 as uuidv4 } from "uuid";
+import { ROUTES } from "../../Constants/Routes";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("mahi.rajput@appinventiv.com");
+  const [email, setEmail] = useState("bansalakshit0460@gmail.com");
   const [password, setPassword] = useState("123456789");
   const [deviceId, setDeviceId] = useState("");
 
@@ -41,7 +42,7 @@ const Login: React.FC = () => {
       e.preventDefault();
       const result = await dispatch(loginUser({ email, password, deviceId }));
       if (loginUser.fulfilled.match(result)) {
-        navigate("/dashboard");
+        navigate(ROUTES.DASHBOARD);
       }
     },
     [email, password, deviceId, dispatch, navigate]
@@ -80,6 +81,14 @@ const Login: React.FC = () => {
 
         <button type="submit" className={styles.loginButton} disabled={loading}>
           {loading ? "Logging in..." : "Login"}
+        </button>
+
+        <button
+          type="button"
+          className={styles.forgotButton}
+          onClick={() => navigate(ROUTES.FORGOT_PASSWORD)}
+        >
+          Forgot Password
         </button>
       </form>
     </div>

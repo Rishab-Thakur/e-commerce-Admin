@@ -10,8 +10,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onToggleSidebar, isOpen }) => {
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log({ onToggleSidebar });
-
   return (
     <header className={styles.header}>
       <div className={styles.left}>

@@ -70,7 +70,11 @@ const Products: React.FC = () => {
   }, [refreshProducts]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (value.trim() === "") {
+      dispatch(fetchProducts({ page: 1 }));
+    }
   }, []);
 
   const totalPages = useMemo(() => Math.ceil(total / (pageSize || 1)), [total, pageSize]);
