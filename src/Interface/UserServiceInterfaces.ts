@@ -24,7 +24,6 @@ export interface GetAllUsersResponse {
 
 export interface SearchUsersRequest {
   query: string;
-  status: "active" | "inactive" | "block";
   limit: number;
 }
 
@@ -40,7 +39,7 @@ export interface UnblockUserResponse {
   message: string;
 }
 
-export interface BlockUserResponse{
+export interface BlockUserResponse {
   success: boolean;
   message: string;
   user?: UserData;

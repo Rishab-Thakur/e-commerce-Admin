@@ -14,4 +14,4 @@ const Loader: React.FC<LoaderProps> = ({ text = "Loading..." }) => {
   );
 };
 
-export default Loader;
+export default React.memo(Loader);

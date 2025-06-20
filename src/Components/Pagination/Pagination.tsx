@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styles from "./Pagination.module.css";
 
 interface PaginationProps {
@@ -14,14 +14,17 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
   if (totalPages <= 1) return null;
 
-  const handlePrev = () => {
+  // Navigate to previous page
+  const handlePrev = useCallback(() => {
     if (currentPage > 1) onPageChange(currentPage - 1);
-  };
+  }, [currentPage, onPageChange]);
 
-  const handleNext = () => {
+  // Navigate to next page
+  const handleNext = useCallback(() => {
     if (currentPage < totalPages) onPageChange(currentPage + 1);
-  };
+  }, [currentPage, totalPages, onPageChange]);
 
+  // Render numbered pagination buttons
   const renderPages = () => {
     const pages = [];
 
@@ -29,9 +32,8 @@ const Pagination: React.FC<PaginationProps> = ({
       pages.push(
         <button
           key={i}
-          className={`${styles.pageButton} ${
-            currentPage === i ? styles.active : ""
-          }`}
+          className={`${styles.pageButton} ${currentPage === i ? styles.active : ""
+            }`}
           onClick={() => onPageChange(i)}
         >
           {i}
@@ -63,4 +65,4 @@ const Pagination: React.FC<PaginationProps> = ({
   );
 };
 
-export default Pagination;
+export default React.memo(Pagination);

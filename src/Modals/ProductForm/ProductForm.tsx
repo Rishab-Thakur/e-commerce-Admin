@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./ProductForm.module.css";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../Redux/Store";
-import {
-  createProduct,
-  updateProduct,
-} from "../../Redux/Slices/ProductSlice";
-import type {
-  Variant,
-  ProductData,
-} from "../../Interface/ProductServiceInterfaces";
+import { createProduct, updateProduct } from "../../Redux/Slices/ProductSlice";
+import type { Variant, ProductData } from "../../Interface/ProductServiceInterfaces";
 import { toast } from "react-toastify";
 
 interface ProductFormProps {
@@ -38,6 +32,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
 
   const [imageType, setImageType] = useState<"file" | "url">("file");
 
+  // Preload form when editing or viewing
   useEffect(() => {
     if (product && (mode === "edit" || mode === "view")) {
       setForm({
@@ -54,44 +49,43 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     }
   }, [product, mode]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  // Handle input field changes
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
       [name]: name === "price" ? parseFloat(value) : value,
     }));
-  };
+  }, []);
 
-  const handleVariantChange = (
-    index: number,
-    field: keyof Variant,
-    value: string | number
-  ) => {
+  // Handle variant field changes
+  const handleVariantChange = useCallback((index: number, field: keyof Variant, value: string | number) => {
     const updatedVariants = [...form.variants];
     updatedVariants[index] = {
       ...updatedVariants[index],
       [field]: field === "stock" ? parseInt(value as string) : value,
     };
     setForm((prev) => ({ ...prev, variants: updatedVariants }));
-  };
+  }, [form.variants]);
 
-  const addVariant = () => {
+  // Add a new variant
+  const addVariant = useCallback(() => {
     setForm((prev) => ({
       ...prev,
       variants: [...prev.variants, defaultVariant],
     }));
-  };
+  }, []);
 
-  const removeVariant = (index: number) => {
+  // Remove a variant
+  const removeVariant = useCallback((index: number) => {
     setForm((prev) => ({
       ...prev,
       variants: prev.variants.filter((_, i) => i !== index),
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle form submit for add/edit
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (isView) return;
 
@@ -112,23 +106,23 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     }
-  };
+  }, [dispatch, form, isView, mode, onClose, product?.id]);
+
+  const formTitle = useMemo(() => {
+    if (mode === "add") return "Add Product";
+    if (mode === "edit") return "Edit Product";
+    return "View Product";
+  }, [mode]);
 
   return (
     <div className={styles.modalBackdrop}>
       <div className={styles.modal}>
-        <h2>
-          {mode === "add"
-            ? "Add Product"
-            : mode === "edit"
-              ? "Edit Product"
-              : "View Product"}
-        </h2>
+        <h2>{formTitle}</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
-
+          {/* Image Upload Section */}
           <div className={styles.imageSection}>
             <label className={styles.label}>Product Image</label>
-            {mode === "add" &&
+            {mode === "add" && (
               <div className={styles.imageInputGroup}>
                 <select
                   value={imageType}
@@ -176,7 +170,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   />
                 )}
               </div>
-            }
+            )}
 
             {form.imageUrl && (
               <div className={styles.imagePreview}>
@@ -185,9 +179,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   <button
                     type="button"
                     className={styles.removeImageBtn}
-                    onClick={() => {
-                      setForm((prev) => ({ ...prev, imageUrl: "" }));
-                    }}
+                    onClick={() => setForm((prev) => ({ ...prev, imageUrl: "" }))}
                   >
                     ×
                   </button>
@@ -196,73 +188,26 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
             )}
           </div>
 
-
+          {/* Basic Info Fields */}
           <div className={styles.grid}>
-            <div>
-              <label className={styles.label}>Product Name</label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                disabled={isView}
-                required
-              />
-            </div>
-            <div>
-              <label className={styles.label}>Brand</label>
-              <input
-                type="text"
-                name="brand"
-                value={form.brand}
-                onChange={handleChange}
-                disabled={isView}
-                required
-              />
-            </div>
-            <div>
-              <label className={styles.label}>Category</label>
-              <input
-                type="text"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                disabled={isView}
-              />
-            </div>
-            <div>
-              <label className={styles.label}>Sub Category</label>
-              <input
-                type="text"
-                name="subCategory"
-                value={form.subCategory}
-                onChange={handleChange}
-                disabled={isView}
-              />
-            </div>
-            <div>
-              <label className={styles.label}>Gender</label>
-              <input
-                type="text"
-                name="gender"
-                value={form.gender}
-                onChange={handleChange}
-                disabled={isView}
-              />
-            </div>
-            <div>
-              <label className={styles.label}>Price</label>
-              <input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                disabled={isView}
-                required
-              />
-            </div>
+            {["name", "brand", "category", "subCategory", "gender", "price"].map((field) => (
+              <div key={field}>
+                <label className={styles.label}>
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  type={field === "price" ? "number" : "text"}
+                  name={field}
+                  value={(form as any)[field]}
+                  onChange={handleChange}
+                  disabled={isView}
+                  required={field === "name" || field === "brand" || field === "price"}
+                />
+              </div>
+            ))}
           </div>
 
+          {/* Description */}
           <div>
             <label className={styles.label}>Description</label>
             <textarea
@@ -274,6 +219,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
             ></textarea>
           </div>
 
+          {/* Variants */}
           <div className={styles.variantSection}>
             <label className={styles.label}>Variants</label>
             {form.variants.map((variant, index) => (
@@ -330,6 +276,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
             )}
           </div>
 
+          {/* Form Actions */}
           <div className={styles.actions}>
             <button
               type="button"
@@ -350,4 +297,4 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
   );
 };
 
-export default ProductForm;
+export default React.memo(ProductForm);

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import styles from "./Users.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../Redux/Store";
 import {
   fetchUsers,
@@ -16,30 +16,30 @@ import { toast } from "react-toastify";
 const Users: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { users, loading, error, page, totalPages } = useSelector(
-    (state: RootState) => state.users
+    (state: RootState) => state.users, shallowEqual
   );
+
+  const totalPage = useMemo(() => Math.ceil(totalPages / (page || 1)), [totalPages, page]);
 
   const [currentPage, setCurrentPage] = useState(page || 1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     dispatch(fetchUsers({ page: currentPage }));
   }, [dispatch, currentPage]);
 
   const refreshUsers = useCallback(() => {
-    if (searchQuery || statusFilter !== "all") {
+    if (searchQuery) {
       dispatch(
         searchUsers({
           query: searchQuery,
-          status: statusFilter === "all" ? undefined : (statusFilter as any),
           limit: 10,
         })
       );
     } else {
       dispatch(fetchUsers({ page: currentPage }));
     }
-  }, [dispatch, searchQuery, statusFilter, currentPage]);
+  }, [dispatch, searchQuery, currentPage]);
 
   const handleBlock = useCallback(async (id: string) => {
     await dispatch(blockUser(id));
@@ -58,23 +58,17 @@ const Users: React.FC = () => {
     refreshUsers();
   }, [refreshUsers]);
 
-  const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatusFilter(e.target.value);
-    setCurrentPage(1);
-    setTimeout(() => refreshUsers(), 0);
-  }, [refreshUsers]);
-
   const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
   }, []);
 
-const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setSearchQuery(value);
-  if (value.trim() === "") {
-    dispatch(fetchUsers({ page: 1 }));
-  }
-}, [dispatch]);
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (value.trim() === "") {
+      dispatch(fetchUsers({ page: 1 }));
+    }
+  }, [dispatch]);
 
   const exportToCSV = useCallback(() => {
     const csv = users
@@ -111,16 +105,6 @@ const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) 
         <button onClick={handleSearchClick} className={styles.searchButton}>
           Search
         </button>
-        {/* <select
-          className={styles.filter}
-          value={statusFilter}
-          onChange={handleStatusChange}
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="block">Blocked</option>
-        </select> */}
       </div>
 
       {loading ? (
@@ -180,7 +164,7 @@ const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) 
 
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
+            totalPages={totalPage}
             onPageChange={handlePageChange}
           />
         </>
@@ -189,4 +173,4 @@ const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) 
   );
 };
 
-export default Users;
+export default React.memo(Users);

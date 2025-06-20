@@ -1,0 +1,102 @@
+import type { OrderResponse } from "../../Interface/OrderServiceInterface";
+
+const dummyOrders: OrderResponse[] = [
+  {
+    orderId: "ORD1001",
+    userId: "USR001",
+    address: "221B Baker Street, London",
+    totalPrice: 2999,
+    status: "processing",
+    paymentStatus: "paid",
+    sessionId: "sess_abc123",
+    paymentUrl: "https://dummy-payment.com/order/ORD1001",
+    refundId: "",
+    createdAt: "2025-06-18T10:30:00Z",
+    products: [
+      {
+        productId: "P001",
+        description: "Men's Running Shoes",
+        color: "Blue",
+        size: "10",
+        quantity: 1,
+        price: 2999,
+      },
+    ],
+  },
+  {
+    orderId: "ORD1002",
+    userId: "USR002",
+    address: "742 Evergreen Terrace, Springfield",
+    totalPrice: 5598,
+    status: "shipped",
+    paymentStatus: "paid",
+    sessionId: "sess_xyz789",
+    paymentUrl: "https://dummy-payment.com/order/ORD1002",
+    refundId: "",
+    createdAt: "2025-06-17T14:45:00Z",
+    products: [
+      {
+        productId: "P002",
+        description: "Wireless Headphones",
+        color: "Black",
+        size: "One Size",
+        quantity: 2,
+        price: 2799,
+      },
+    ],
+  },
+  {
+    orderId: "ORD1003",
+    userId: "USR003",
+    address: "12 Grimmauld Place, London",
+    totalPrice: 1599,
+    status: "delivered",
+    paymentStatus: "paid",
+    sessionId: "sess_jkl456",
+    paymentUrl: "https://dummy-payment.com/order/ORD1003",
+    refundId: "",
+    createdAt: "2025-06-16T08:15:00Z",
+    products: [
+      {
+        productId: "P003",
+        description: "Cotton T-Shirt",
+        color: "White",
+        size: "M",
+        quantity: 1,
+        price: 799,
+      },
+      {
+        productId: "P004",
+        description: "Casual Shorts",
+        color: "Grey",
+        size: "32",
+        quantity: 1,
+        price: 800,
+      },
+    ],
+  },
+  {
+    orderId: "ORD1004",
+    userId: "USR004",
+    address: "Apartment 4A, 129 W 81st St, NYC",
+    totalPrice: 4599,
+    status: "cancelled",
+    paymentStatus: "refunded",
+    sessionId: "sess_mno321",
+    paymentUrl: "https://dummy-payment.com/order/ORD1004",
+    refundId: "rfnd_001",
+    createdAt: "2025-06-15T18:00:00Z",
+    products: [
+      {
+        productId: "P005",
+        description: "Smart Fitness Band",
+        color: "Black",
+        size: "One Size",
+        quantity: 1,
+        price: 4599,
+      },
+    ],
+  },
+];
+
+export default dummyOrders;

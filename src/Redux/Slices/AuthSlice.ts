@@ -38,7 +38,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-
 export const loginUser = createAsyncThunk<
   { user: AuthState["user"]; accessToken: string; refreshToken: string },
   LoginRequest,
@@ -73,10 +72,6 @@ export const loginUser = createAsyncThunk<
 export const logoutUser = createAsyncThunk<void, void, { state: RootState }>(
   "admin/logout",
   async (_, thunkAPI) => {
-    localStorage.removeItem("adminUser");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-
     try {
       const token = thunkAPI.getState().auth.accessToken;
       if (token) {
@@ -84,9 +79,9 @@ export const logoutUser = createAsyncThunk<void, void, { state: RootState }>(
       }
     } catch {
     } finally {
-      // localStorage.removeItem("adminUser");
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("refreshToken");
+      localStorage.removeItem("adminUser");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     }
   }
 );
@@ -94,7 +89,11 @@ export const logoutUser = createAsyncThunk<void, void, { state: RootState }>(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -125,7 +124,6 @@ const authSlice = createSlice({
   },
 });
 
+export const { clearError } = authSlice.actions;
 export const selectAuth = (state: RootState) => state.auth;
 export default authSlice.reducer;
-
-
