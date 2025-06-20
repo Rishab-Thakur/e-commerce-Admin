@@ -6,5 +6,6 @@ export const ROUTES = {
     USERS: "/users",
     NOT_FOUND: "*",
     FORGOT_PASSWORD: "/forgot-password",
+    CHANGE_PASSWORD: "/change-password",
   };
   

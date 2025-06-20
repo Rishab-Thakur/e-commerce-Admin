@@ -1,25 +1,20 @@
 import React, { useEffect } from "react";
 import styles from "./Dashboard.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import { fetchDashboardStats } from "../../Redux/Slices/DashboardSlice";
 import Loader from "../../Components/Loader/Loader";
 
+
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-//   useEffect(() => {
-//   dispatch(fetchDashboardStats());
-// }, [dispatch]);
   useEffect(() => {
-    if (isAuthenticated && accessToken) {
-      dispatch(fetchDashboardStats());
-    }
-  }, [dispatch, isAuthenticated]);
+    dispatch(fetchDashboardStats());
+  }, [dispatch]);
 
   const { totalOrders, totalProducts, totalUsers, totalRevenue, loading, error } = useSelector(
-    (state: RootState) => state.dashboard
+    (state: RootState) => state.dashboard, shallowEqual
   );
 
   return (
@@ -55,4 +50,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

@@ -30,3 +30,8 @@ export interface ResetPasswordRequest{
   newPassword: string;
   token: string;
 };
+
+export interface ChangePasswordRequest{
+  oldPassword: string;
+  newPassword: string;
+}

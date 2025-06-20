@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import styles from "./Products.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import {
   fetchProducts,
@@ -15,7 +15,7 @@ import type { ProductData } from "../../Interface/ProductServiceInterfaces";
 const Products: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { products, loading, error, total, page, pageSize } = useSelector(
-    (state: RootState) => state.products
+    (state: RootState) => state.products, shallowEqual
   );
 
   const [currentPage, setCurrentPage] = useState<number>(page || 1);
@@ -177,4 +177,4 @@ const Products: React.FC = () => {
   );
 };
 
-export default Products;
+export default React.memo(Products);

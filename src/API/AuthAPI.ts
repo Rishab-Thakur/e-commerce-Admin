@@ -1,5 +1,6 @@
 import { api, loginApi } from "./Index";
 import type {
+  ChangePasswordRequest,
   LoginRequest,
   LoginResponses,
   LogoutRequest,
@@ -17,10 +18,7 @@ export const AuthAPI = {
   verifyOTP: (data: { email: string; otp: string }) =>
     api.post("/verify-otp", data),
 
-  // resetPassword: (data: { email: string; password: string }) =>
-  //   api.post("/reset-password", data),
-
-  changePassword: (data: { oldPassword: string; newPassword: string }) =>
+  changePassword: (data: ChangePasswordRequest) =>
     api.post("/change-password", data),
 
   logout: (data: LogoutRequest) =>
@@ -29,6 +27,6 @@ export const AuthAPI = {
   sendOtp: (payload: { email: string }) =>
     api.post("/forgot-password", payload),
 
-  resetPassword: (payload: ResetPasswordRequest) => 
+  resetPassword: (payload: ResetPasswordRequest) =>
     api.post("/reset-password", payload),
 };

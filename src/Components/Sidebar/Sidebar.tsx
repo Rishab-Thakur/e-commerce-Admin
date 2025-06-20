@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import {
@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../Redux/Store";
 import { logoutUser } from "../../Redux/Slices/AuthSlice";
 import { ROUTES } from "../../Constants/Routes";
+import { IoMdKey } from "react-icons/io";
 
 export interface SidebarProps {
   isOpen: boolean;
@@ -23,10 +24,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const handleLogout = async() => {
-    dispatch(logoutUser());
+  const handleLogout = useCallback(async () => {
+    await dispatch(logoutUser());
     navigate(ROUTES.LOGIN);
-  };
+  }, [dispatch, navigate]);
 
   return (
     <aside className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}>
@@ -36,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       <nav className={styles.nav}>
         <NavLink
-          to="/dashboard"
+          to={ROUTES.DASHBOARD}
           className={({ isActive }) =>
             isActive ? `${styles.link} ${styles.active}` : styles.link
           }
@@ -44,8 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <MdDashboard className={styles.icon} />
           Dashboard
         </NavLink>
+
         <NavLink
-          to="/products"
+          to={ROUTES.PRODUCTS}
           className={({ isActive }) =>
             isActive ? `${styles.link} ${styles.active}` : styles.link
           }
@@ -53,8 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <MdInventory2 className={styles.icon} />
           Products
         </NavLink>
+
         <NavLink
-          to="/orders"
+          to={ROUTES.ORDERS}
           className={({ isActive }) =>
             isActive ? `${styles.link} ${styles.active}` : styles.link
           }
@@ -62,8 +65,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <MdShoppingCart className={styles.icon} />
           Orders
         </NavLink>
+
         <NavLink
-          to="/users"
+          to={ROUTES.USERS}
           className={({ isActive }) =>
             isActive ? `${styles.link} ${styles.active}` : styles.link
           }
@@ -72,13 +76,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           Users
         </NavLink>
 
+        <NavLink
+          to={ROUTES.CHANGE_PASSWORD}
+          className={({ isActive }) =>
+            isActive ? `${styles.link} ${styles.active}` : styles.link
+          }
+        >
+          <IoMdKey className={styles.icon} />
+          Change Password
+        </NavLink>
+
         <button onClick={handleLogout} className={styles.link}>
           <MdLogout className={styles.icon} />
           Logout
         </button>
+
       </nav>
+
+
     </aside>
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

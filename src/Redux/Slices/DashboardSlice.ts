@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { DashboardAPI } from "../../API/Index";
-import type {DashboardData} from "../../Interface/Dashboard"
-
+import { DashboardAPI } from "../../API/DashboardAPI";
+import type { DashboardData } from "../../Interface/Dashboard";
+import type { RootState } from "../Store";
 
 const initialState: DashboardData = {
   totalProducts: 0,
@@ -15,6 +15,12 @@ const initialState: DashboardData = {
 export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
   async (_, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
+    const token = state.auth.accessToken;
+    if (!token) {
+      return thunkAPI.rejectWithValue("Not authenticated");
+    }
+
     try {
       const stats = await DashboardAPI.getStats();
 
@@ -22,10 +28,12 @@ export const fetchDashboardStats = createAsyncThunk(
         totalProducts: stats.data.totalProducts || 0,
         totalOrders: stats.data.totalOrders || 0,
         totalUsers: stats.data.totalUsers || 0,
-        totalRevenue: stats.data.totalRevenue|| 0,
+        totalRevenue: stats.data.totalRevenue || 0,
       };
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to load dashboard data");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to load dashboard data"
+      );
     }
   }
 );

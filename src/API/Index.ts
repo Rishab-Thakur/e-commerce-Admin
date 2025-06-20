@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = "http://localhost:3007/admin";
-const BASE_URL = "http://172.50.1.26:3007/admin";
-// const BASE_URL = "http://172.50.3.140:3009/admin";
+const BASE_URL = "http://localhost:3007/admin";
+// const BASE_URL = "http://172.50.1.26:3007/admin";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -20,7 +19,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
 export const loginApi = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -28,22 +26,3 @@ export const loginApi = axios.create({
   },
   withCredentials: true,
 });
-
-
-export const DashboardAPI = {
-  getStats: () => api.get("/dashboard"),
-};
-
-
-
-export const OrdersAPI = {
-  getAll: () => api.get("/order"),
-  getById: (id: string) => api.get(`/order/${id}`),
-  updateStatus: (id: string, status: string) =>
-    api.put(`/order/${id}`, { status }),
-  returnOrder: (orderId: string) => api.post("/order/return", { orderId }),
-  cancelOrder: (orderId: string) => api.post("/order/cancel", { orderId }),
-};
-
-
-

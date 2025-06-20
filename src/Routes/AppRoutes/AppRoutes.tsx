@@ -4,7 +4,7 @@ import { ROUTES } from "../../Constants/Routes";
 
 import Login from "../../Pages/Login/Login";
 import Dashboard from "../../Pages/Dashboard/Dashboard";
-import Products from "../../Pages/Products/Prdoducts";
+import Products from "../../Pages/Products/Products";
 import Orders from "../../Pages/Orders/Orders";
 import Users from "../../Pages/Users/Users";
 import NotFound from "../../Pages/NotFound/NotFound";
@@ -13,6 +13,7 @@ import MainLayout from "../../Layouts/MainLayout";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import PublicRoute from "../PublicRoutes/PublicRoutes";
 import ForgotPassword from "../../Pages/ForgetPassword/ForgetPassword";
+import ChangePassword from "../../Pages/ChangePassword/ChangePassword";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -25,14 +26,14 @@ const AppRoutes: React.FC = () => {
           </PublicRoute>
         }
       />
-       <Route
-          path={ROUTES.FORGOT_PASSWORD}
-          element={
-            <PublicRoute>
-              <ForgotPassword />
-            </PublicRoute>
-          }
-        />
+      <Route
+        path={ROUTES.FORGOT_PASSWORD}
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
 
       <Route element={<MainLayout />}>
         <Route
@@ -67,6 +68,14 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path={ROUTES.CHANGE_PASSWORD}
+          element={
+            <ProtectedRoute>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Default redirect to dashboard */}
         <Route path="/" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
@@ -78,4 +87,4 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-export default AppRoutes;
+export default React.memo(AppRoutes);

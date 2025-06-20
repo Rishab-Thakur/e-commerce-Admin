@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styles from "./DeleteConfirm.module.css";
 import { toast } from "react-toastify";
 
@@ -17,14 +17,14 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleConfirm = async () => {
+  const handleConfirm = useCallback(async () => {
     try {
       await onConfirm();
       toast.success("Deleted successfully.");
     } catch (error) {
       toast.error("Failed to delete. Please try again.");
     }
-  };
+  }, [onConfirm]);
 
   return (
     <div className={styles.backdrop}>
@@ -44,4 +44,4 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   );
 };
 
-export default DeleteConfirmModal;
+export default React.memo(DeleteConfirmModal);

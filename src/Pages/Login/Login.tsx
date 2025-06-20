@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./Login.module.css";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { loginUser } from "../../Redux/Slices/AuthSlice";
+import { clearError, loginUser } from "../../Redux/Slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import { v4 as uuidv4 } from "uuid";
@@ -31,10 +31,12 @@ const Login: React.FC = () => {
 
   const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    dispatch(clearError());
   }, []);
 
   const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    dispatch(clearError());
   }, []);
 
   const handleLogin = useCallback(
