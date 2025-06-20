@@ -1,34 +1,37 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
 }
 
 .modal {
   background-color: #ffffff;
   padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s ease;
 }
 
 .title {
   color: #004d40;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
 .message {
-  color: #333;
+  color: #333333;
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  line-height: 1.4;
 }
 
 .actions {
@@ -38,41 +41,41 @@
   flex-wrap: wrap;
 }
 
-.cancelButton {
+.cancelButton,
+.confirmButton {
   flex: 1;
-  background-color: #cccccc;
-  color: #004d40;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  border: none;
+}
+
+.cancelButton {
+  background-color: #e0e0e0;
+  color: #004d40;
 }
 
 .cancelButton:hover {
-  background-color: #b3b3b3;
+  background-color: #c7c7c7;
+  transform: translateY(-1px);
 }
 
 .confirmButton {
-  flex: 1;
   background-color: #ff9800;
   color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s ease;
 }
 
 .confirmButton:hover {
   background-color: #e68900;
+  transform: translateY(-1px);
 }
 
 @keyframes fadeIn {
   from {
-    transform: scale(0.9);
+    transform: scale(0.95);
     opacity: 0;
   }
   to {

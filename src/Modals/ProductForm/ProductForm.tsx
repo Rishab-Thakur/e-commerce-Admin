@@ -12,7 +12,6 @@ import type {
 } from "../../Interface/ProductServiceInterfaces";
 import { toast } from "react-toastify";
 
-
 interface ProductFormProps {
   mode: "add" | "edit" | "view";
   product?: ProductData | null;

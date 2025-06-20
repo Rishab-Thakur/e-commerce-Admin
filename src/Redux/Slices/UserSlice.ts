@@ -103,19 +103,49 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
 
+      .addCase(blockUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(blockUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
         state.users = state.users.map((user) =>
           user.id === updatedUser.id ? updatedUser : user
         );
       })
+      .addCase(blockUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
 
+      .addCase(unblockUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(unblockUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
         state.users = state.users.map((user) =>
           user.id === updatedUser.id ? updatedUser : user
         );
-      });
+      })
+      .addCase(unblockUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(searchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users;
+        state.total = action.payload.total;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
   },
 });
 

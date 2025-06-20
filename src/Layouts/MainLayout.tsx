@@ -19,7 +19,7 @@ const MainLayout: React.FC = () => {
           isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
         }`}
       >
-        <Header onToggleSidebar={toggleSidebar} />
+        <Header onToggleSidebar={toggleSidebar} isOpen={isSidebarOpen}  />
         <main className={styles.main}>
           <Outlet />
         </main>

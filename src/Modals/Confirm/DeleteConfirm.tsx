@@ -6,7 +6,7 @@ interface DeleteConfirmModalProps {
   isOpen: boolean;
   message: string;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void> | void;
 }
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
@@ -17,10 +17,10 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     try {
-      onConfirm();
-      toast.success("Item deleted successfully.");
+      await onConfirm();
+      toast.success("Deleted successfully.");
     } catch (error) {
       toast.error("Failed to delete. Please try again.");
     }
@@ -30,9 +30,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
     <div className={styles.backdrop}>
       <div className={styles.modal}>
         <h2 className={styles.title}>Confirm Deletion</h2>
-        <p className={styles.message}>
-          <strong>{message}</strong>
-        </p>
+        <p className={styles.message}>{message}</p>
         <div className={styles.actions}>
           <button className={styles.cancelButton} onClick={onCancel}>
             Cancel

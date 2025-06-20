@@ -1,85 +1,189 @@
-.ordersPage {
-    padding: 1rem 0;
-  }
-  
+.container {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.heading h2 {
+  color: #004d40;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.orderTable th,
+.orderTable td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  vertical-align: top;
+}
+
+.orderTable th {
+  background-color: #004d40;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.OrderTable td {
+  color: #333;
+}
+
+.OrderTable td div {
+  margin-bottom: 0.3rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.orderTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+.view,
+.update {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.view {
+  background-color: #004d40;
+  color: white;
+}
+
+.view:hover {
+  background-color: #00695c;
+  color: white;
+}
+
+.update {
+  background-color: #ff9800;
+}
+
+.update:hover {
+  background-color: #fb8c00;
+}
+
+.error {
+  color: #c62828;
+  background-color: #ffebee;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+
+@media (max-width: 768px) {
   .heading {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: #004d40;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
-  
-  .tableWrapper {
-    overflow-x: auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.06);
+
+  .orderTable thead {
+    display: none;
   }
-  
-  .table {
+
+  .orderTable,
+  .orderTable tbody,
+  .orderTable tr,
+  .orderTable td {
+    display: block;
     width: 100%;
-    border-collapse: collapse;
-    min-width: 600px;
   }
-  
-  th,
-  td {
-    padding: 0.85rem 1.2rem;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+
+  .orderTable tr {
+    margin-bottom: 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #fdfdfd;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   }
-  
-  th {
-    background-color: #e0f2f1;
+
+  .orderTable td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    white-space: normal;
+  }
+
+  .orderTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.8rem;
+    font-weight: 600;
     color: #004d40;
-    font-weight: 600;
+    text-align: left;
   }
-  
-  tr:hover {
-    background-color: #f1f1f1;
+
+  .actions {
+    justify-content: flex-end;
   }
-  
-  .status {
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-block;
-    text-align: center;
-    white-space: nowrap;
-  }
-  
-  /* Status Colors */
-  .Pending {
-    background-color: #fff3cd;
-    color: #856404;
-  }
-  .Processing {
-    background-color: #d1ecf1;
-    color: #0c5460;
-  }
-  .Shipped {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  .Delivered {
-    background-color: #cce5ff;
-    color: #004085;
-  }
-  .Cancelled {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .heading {
-      font-size: 1.4rem;
-      text-align: center;
-    }
-  
-    th,
-    td {
-      padding: 0.6rem 0.8rem;
-    }
-  }
-  
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.searchInput:focus {
+  border-color: #004d40;
+  box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.15);
+}
+
+.searchButton {
+  padding: 0.6rem 1.5rem;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background-color: #00695c;
+}

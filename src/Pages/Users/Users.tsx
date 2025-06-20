@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./Users.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../Redux/Store";
@@ -19,7 +19,7 @@ const Users: React.FC = () => {
     (state: RootState) => state.users
   );
 
-  const [currentPage, setCurrentPage] = useState(page);
+  const [currentPage, setCurrentPage] = useState(page || 1);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -27,19 +27,7 @@ const Users: React.FC = () => {
     dispatch(fetchUsers({ page: currentPage }));
   }, [dispatch, currentPage]);
 
-  const handleBlock = async (id: string) => {
-    await dispatch(blockUser(id));
-    toast.success("User blocked");
-    refreshUsers();
-  };
-
-  const handleUnblock = async (id: string) => {
-    await dispatch(unblockUser(id));
-    toast.success("User unblocked");
-    refreshUsers();
-  };
-
-  const refreshUsers = () => {
+  const refreshUsers = useCallback(() => {
     if (searchQuery || statusFilter !== "all") {
       dispatch(
         searchUsers({
@@ -51,26 +39,44 @@ const Users: React.FC = () => {
     } else {
       dispatch(fetchUsers({ page: currentPage }));
     }
-  };
+  }, [dispatch, searchQuery, statusFilter, currentPage]);
 
-  const handleSearchClick = () => {
+  const handleBlock = useCallback(async (id: string) => {
+    await dispatch(blockUser(id));
+    toast.success("User blocked");
+    refreshUsers();
+  }, [dispatch, refreshUsers]);
+
+  const handleUnblock = useCallback(async (id: string) => {
+    await dispatch(unblockUser(id));
+    toast.success("User unblocked");
+    refreshUsers();
+  }, [dispatch, refreshUsers]);
+
+  const handleSearchClick = useCallback(() => {
     setCurrentPage(1);
     refreshUsers();
-  };
+  }, [refreshUsers]);
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusFilter(e.target.value);
     setCurrentPage(1);
-    setTimeout(() => {
-      refreshUsers();
-    }, 0);
-  };
+    setTimeout(() => refreshUsers(), 0);
+  }, [refreshUsers]);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
-  };
+  }, []);
 
-  const exportToCSV = () => {
+const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  if (value.trim() === "") {
+    dispatch(fetchUsers({ page: 1 }));
+  }
+}, [dispatch]);
+
+  const exportToCSV = useCallback(() => {
     const csv = users
       .map((user) => `${user.name},${user.email},${user.role},${user.status}`)
       .join("\n");
@@ -83,7 +89,7 @@ const Users: React.FC = () => {
     a.download = "users.csv";
     a.click();
     URL.revokeObjectURL(url);
-  };
+  }, [users]);
 
   return (
     <div className={styles.container}>
@@ -99,13 +105,13 @@ const Users: React.FC = () => {
           type="text"
           placeholder="Search by name or email..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           className={styles.searchInput}
         />
         <button onClick={handleSearchClick} className={styles.searchButton}>
           Search
         </button>
-        <select
+        {/* <select
           className={styles.filter}
           value={statusFilter}
           onChange={handleStatusChange}
@@ -114,8 +120,7 @@ const Users: React.FC = () => {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
           <option value="block">Blocked</option>
-        </select>
-
+        </select> */}
       </div>
 
       {loading ? (
@@ -145,8 +150,7 @@ const Users: React.FC = () => {
                     <td>{user.phone}</td>
                     <td>
                       <span
-                        className={`${styles.statusBadge} ${styles[user.status]
-                          }`}
+                        className={`${styles.statusBadge} ${styles[user.status]}`}
                       >
                         {user.status}
                       </span>

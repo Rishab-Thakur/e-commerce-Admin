@@ -24,3 +24,9 @@ export interface LoginResponses {
     refreshToken: string;
   };
 }
+
+export interface ResetPasswordRequest{
+  otp: string;
+  newPassword: string;
+  token: string;
+};

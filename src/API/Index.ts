@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// const BASE_URL = "http://localhost:3002/admin";
+// const BASE_URL = "http://localhost:3007/admin";
 const BASE_URL = "http://172.50.1.26:3007/admin";
 // const BASE_URL = "http://172.50.3.140:3009/admin";
 
@@ -9,6 +9,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
@@ -20,10 +21,18 @@ api.interceptors.request.use((config) => {
 });
 
 
+export const loginApi = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
 
-// export const DashboardAPI = {
-//   getStats: () => api.get("/dashboard"),
-// };
+
+export const DashboardAPI = {
+  getStats: () => api.get("/dashboard"),
+};
 
 
 

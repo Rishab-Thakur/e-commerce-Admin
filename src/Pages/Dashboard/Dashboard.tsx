@@ -7,13 +7,20 @@ import Loader from "../../Components/Loader/Loader";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+//   useEffect(() => {
+//   dispatch(fetchDashboardStats());
+// }, [dispatch]);
+  useEffect(() => {
+    if (isAuthenticated && accessToken) {
+      dispatch(fetchDashboardStats());
+    }
+  }, [dispatch, isAuthenticated]);
+
   const { totalOrders, totalProducts, totalUsers, totalRevenue, loading, error } = useSelector(
     (state: RootState) => state.dashboard
   );
-
-  useEffect(() => {
-    dispatch(fetchDashboardStats());
-  }, [dispatch]);
 
   return (
     <div className={styles.dashboard}>

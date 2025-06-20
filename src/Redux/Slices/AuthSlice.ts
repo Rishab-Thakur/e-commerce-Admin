@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AuthAPI } from "../../API/AuthAPI";
 import type {
   LoginRequest,
-  LogoutRequest,
+  // LogoutRequest,
 } from "../../Interface/AuthServiceInterfaces";
 import type { RootState } from "../Store";
 
@@ -38,6 +38,7 @@ const initialState: AuthState = {
   error: null,
 };
 
+
 export const loginUser = createAsyncThunk<
   { user: AuthState["user"]; accessToken: string; refreshToken: string },
   LoginRequest,
@@ -72,16 +73,20 @@ export const loginUser = createAsyncThunk<
 export const logoutUser = createAsyncThunk<void, void, { state: RootState }>(
   "admin/logout",
   async (_, thunkAPI) => {
+    localStorage.removeItem("adminUser");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
     try {
       const token = thunkAPI.getState().auth.accessToken;
       if (token) {
-        await AuthAPI.logout({ accessToken: token } as LogoutRequest);
+        await AuthAPI.logout({ accessToken: token });
       }
     } catch {
     } finally {
-      localStorage.removeItem("adminUser");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      // localStorage.removeItem("adminUser");
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("refreshToken");
     }
   }
 );
@@ -122,3 +127,5 @@ const authSlice = createSlice({
 
 export const selectAuth = (state: RootState) => state.auth;
 export default authSlice.reducer;
+
+
