@@ -3,7 +3,7 @@ export interface UserData {
   email: string;
   name: string;
   phone: string;
-  status: string; // Could use enum
+  status: string;
   role: string;
 }
 

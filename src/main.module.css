@@ -80,8 +80,6 @@ input:focus, select:focus, textarea:focus {
   padding-right: 16px;
 }
 
-/* Utility classes */
-
 .text-center {
   text-align: center;
 }
@@ -99,7 +97,6 @@ input:focus, select:focus, textarea:focus {
   white-space: nowrap; 
 }
 
-/* Responsive Typography Example */
 
 @media (max-width: 600px) {
   html {

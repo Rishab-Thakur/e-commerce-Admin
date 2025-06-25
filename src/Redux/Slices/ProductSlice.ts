@@ -4,24 +4,9 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
   ProductFilter,
-  Variant,
   ProductData,
 } from "../../Interface/ProductServiceInterfaces";
 import type { RootState } from "../Store";
-
-export interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-  subCategory: string;
-  gender: string;
-  imageUrl: string;
-  description: string;
-  price: number;
-  totalStock: number;
-  variants: (Variant & { id: string })[];
-}
 
 interface ProductState {
   products: ProductData[];
@@ -41,7 +26,6 @@ const initialState: ProductState = {
   pageSize: 10,
 };
 
-
 export const fetchProducts = createAsyncThunk(
   "products/fetchAll",
   async (filters: ProductFilter = {}, thunkAPI) => {
@@ -49,7 +33,9 @@ export const fetchProducts = createAsyncThunk(
       const response = await ProductAPI.listProducts(filters);
       return response.data.data.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data?.data?.message || "Failed to fetch products");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.data?.message || "Failed to fetch products"
+      );
     }
   }
 );
@@ -61,7 +47,9 @@ export const createProduct = createAsyncThunk(
       await ProductAPI.createProduct(product);
       thunkAPI.dispatch(fetchProducts({}));
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to create product");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to create product"
+      );
     }
   }
 );
@@ -73,7 +61,9 @@ export const updateProduct = createAsyncThunk(
       await ProductAPI.updateProduct(product);
       thunkAPI.dispatch(fetchProducts({}));
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to update product");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update product"
+      );
     }
   }
 );
@@ -85,12 +75,12 @@ export const deleteProduct = createAsyncThunk(
       await ProductAPI.deleteProduct(id);
       thunkAPI.dispatch(fetchProducts({}));
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to delete product");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to delete product"
+      );
     }
   }
 );
-
-
 
 const productSlice = createSlice({
   name: "products",
@@ -112,8 +102,7 @@ const productSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      })
-
+      });
   },
 });
 

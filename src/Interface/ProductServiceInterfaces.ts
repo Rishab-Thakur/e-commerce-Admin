@@ -1,7 +1,5 @@
-// src/Interface/ProductServiceInterfaces.ts
-
 export interface Variant {
-  id?: string;
+  _id?: string;
   size: string;
   color: string;
   stock: number;
@@ -11,30 +9,35 @@ export interface CreateProductRequest {
   name: string;
   category: string;
   subCategory?: string;
-  gender?: string;
+  gender: string;
   brand: string;
-  imageUrl: string;
+  images: ProductImage[];
   description: string;
   price: number;
   totalStock: number;
   variants: Variant[];
 }
 
+export interface ProductImage {
+  url: string;
+  isPrimary: boolean;
+}
+
 export interface UpdateProductRequest {
-  id: string;
+  _id: string;
   name?: string;
   category?: string;
   subCategory?: string;
   gender?: string;
   brand?: string;
-  imageUrl?: string;
+  images?: ProductImage[];
   description?: string;
   price?: number;
   variants?: Variant[];
 }
 
 export interface ProductID {
-  id: string;
+  _id: string;
 }
 
 export interface ProductFilter {
@@ -53,10 +56,10 @@ export interface UpdateInventoryRequest {
 }
 
 export interface ProductData {
-  id: string;
+  _id: string;
   name: string;
   brand: string;
-  imageUrl: string;
+  images: ProductImage[];
   description: string;
   price: number;
   totalStock: number;
@@ -77,6 +80,8 @@ export interface Response {
   code: number;
   status: string;
   timestamp: string;
-  data: string; 
+  data: {
+    data: ListProductsResponse;
+  };
   error: string;
 }
