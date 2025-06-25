@@ -2,8 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./ProductForm.module.css";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../Redux/Store";
+import { MdDeleteForever } from "react-icons/md";
 import { createProduct, updateProduct } from "../../Redux/Slices/ProductSlice";
-import type { Variant, ProductData } from "../../Interface/ProductServiceInterfaces";
+import type {
+  Variant,
+  ProductData,
+  ProductImage,
+} from "../../Interface/ProductServiceInterfaces";
 import { toast } from "react-toastify";
 
 interface ProductFormProps {
@@ -24,51 +29,55 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     subCategory: "",
     gender: "",
     brand: "",
-    imageUrl: "",
     description: "",
     price: 0,
     variants: [defaultVariant],
+    images: [] as ProductImage[],
   });
 
   const [imageType, setImageType] = useState<"file" | "url">("file");
+  const [tempImageUrl, setTempImageUrl] = useState("");
 
-  // Preload form when editing or viewing
+  // Load product data if editing or viewing
   useEffect(() => {
     if (product && (mode === "edit" || mode === "view")) {
       setForm({
-        name: product?.name,
-        category: product?.category || "",
-        subCategory: product?.subCategory || "",
-        gender: product?.gender ?? "",
-        brand: product?.brand ?? "",
-        imageUrl: product?.imageUrl ?? "",
-        description: product?.description ?? "",
-        price: product?.price,
-        variants: product?.variants || [defaultVariant],
+        name: product.name,
+        category: product.category || "",
+        subCategory: product.subCategory || "",
+        gender: product.gender || "",
+        brand: product.brand || "",
+        description: product.description || "",
+        price: product.price,
+        variants: product.variants || [defaultVariant],
+        images: product.images || [],
       });
     }
-  }, [product, mode]);
+  }, [mode, product]);
 
-  // Handle input field changes
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name === "price" ? parseFloat(value) : value,
-    }));
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({
+        ...prev,
+        [name]: name === "price" ? parseFloat(value) : value,
+      }));
+    },
+    []
+  );
 
-  // Handle variant field changes
-  const handleVariantChange = useCallback((index: number, field: keyof Variant, value: string | number) => {
-    const updatedVariants = [...form.variants];
-    updatedVariants[index] = {
-      ...updatedVariants[index],
-      [field]: field === "stock" ? parseInt(value as string) : value,
-    };
-    setForm((prev) => ({ ...prev, variants: updatedVariants }));
-  }, [form.variants]);
+  const handleVariantChange = useCallback(
+    (index: number, field: keyof Variant, value: string | number) => {
+      const updatedVariants = [...form.variants];
+      updatedVariants[index] = {
+        ...updatedVariants[index],
+        [field]: field === "stock" ? parseInt(value as string) : value,
+      };
+      setForm((prev) => ({ ...prev, variants: updatedVariants }));
+    },
+    [form.variants]
+  );
 
-  // Add a new variant
   const addVariant = useCallback(() => {
     setForm((prev) => ({
       ...prev,
@@ -76,7 +85,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     }));
   }, []);
 
-  // Remove a variant
   const removeVariant = useCallback((index: number) => {
     setForm((prev) => ({
       ...prev,
@@ -84,29 +92,82 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     }));
   }, []);
 
-  // Handle form submit for add/edit
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isView) return;
+  const addImage = useCallback(() => {
+    if (!tempImageUrl) return;
+    setForm((prev) => ({
+      ...prev,
+      images: [...prev.images, { url: tempImageUrl, isPrimary: prev.images.length === 0 }],
+    }));
+    setTempImageUrl("");
+  }, [tempImageUrl]);
 
-    const payload = {
-      ...form,
-      totalStock: form.variants.reduce((sum, v) => sum + (v.stock || 0), 0),
-    };
-
-    try {
-      if (mode === "add") {
-        await dispatch(createProduct(payload)).unwrap();
-        toast.success("Product added successfully!");
-      } else if (mode === "edit" && product?.id) {
-        await dispatch(updateProduct({ id: product.id, ...payload })).unwrap();
-        toast.success("Product updated successfully!");
+  const handleFileUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          setForm((prev) => ({
+            ...prev,
+            images: [
+              ...prev.images,
+              { url: base64, isPrimary: prev.images.length === 0 },
+            ],
+          }));
+        };
+        reader.readAsDataURL(file);
       }
-      onClose();
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-    }
-  }, [dispatch, form, isView, mode, onClose, product?.id]);
+    },
+    []
+  );
+
+  const removeImage = useCallback((index: number) => {
+    setForm((prev) => {
+      const updated = [...prev.images];
+      updated.splice(index, 1);
+      if (!updated.find((img) => img.isPrimary) && updated[0]) {
+        updated[0].isPrimary = true;
+      }
+      return { ...prev, images: updated };
+    });
+  }, []);
+
+  const setPrimaryImage = useCallback((index: number) => {
+    setForm((prev) => {
+      const updated = prev.images.map((img, i) => ({
+        ...img,
+        isPrimary: i === index,
+      }));
+      return { ...prev, images: updated };
+    });
+  }, []);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (isView) return;
+
+      const payload = {
+        ...form,
+        totalStock: form.variants.reduce((sum, v) => sum + (v.stock || 0), 0),
+      };
+
+      try {
+        if (mode === "add") {
+          await dispatch(createProduct(payload)).unwrap();
+          toast.success("Product added successfully!");
+        } else if (mode === "edit" && product?._id) {
+          await dispatch(updateProduct({ _id: product._id, ...payload })).unwrap();
+          toast.success("Product updated successfully!");
+        }
+        onClose();
+      } catch {
+        toast.error("Something went wrong. Please try again.");
+      }
+    },
+    [dispatch, form, isView, mode, onClose, product?._id]
+  );
 
   const formTitle = useMemo(() => {
     if (mode === "add") return "Add Product";
@@ -119,76 +180,84 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
       <div className={styles.modal}>
         <h2>{formTitle}</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* Image Upload Section */}
           <div className={styles.imageSection}>
-            <label className={styles.label}>Product Image</label>
-            {mode === "add" && (
-              <div className={styles.imageInputGroup}>
-                <select
-                  value={imageType}
-                  onChange={(e) => {
-                    setImageType(e.target.value as "file" | "url");
-                    setForm((prev) => ({ ...prev, imageUrl: "" }));
-                  }}
-                  className={styles.selectInput}
-                  disabled={isView}
-                >
-                  <option value="file">Upload Image</option>
-                  <option value="url">Upload Image URL</option>
-                </select>
-
-                {imageType === "file" ? (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setForm((prev) => ({
-                            ...prev,
-                            imageUrl: reader.result as string,
-                          }));
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
+            <label className={styles.label}>Product Images</label>
+            {mode !== "view" && (
+              <>
+                <div className={styles.imageInputGroup}>
+                  <select
+                    value={imageType}
+                    onChange={(e) => setImageType(e.target.value as "file" | "url")}
+                    className={styles.selectInput}
                     disabled={isView}
-                    className={styles.fileInput}
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    name="imageUrl"
-                    placeholder="Image URL"
-                    value={form.imageUrl}
-                    onChange={handleChange}
-                    disabled={isView}
-                    className={styles.urlInput}
-                    required
-                  />
-                )}
-              </div>
-            )}
-
-            {form.imageUrl && (
-              <div className={styles.imagePreview}>
-                <img src={form.imageUrl} alt="Product" />
-                {!isView && (
-                  <button
-                    type="button"
-                    className={styles.removeImageBtn}
-                    onClick={() => setForm((prev) => ({ ...prev, imageUrl: "" }))}
                   >
-                    ×
-                  </button>
-                )}
-              </div>
+                    <option value="file">Upload File</option>
+                    <option value="url">Enter URL</option>
+                  </select>
+
+                  {imageType === "file" ? (
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={isView}
+                      className={styles.fileInput}
+                    />
+                  ) : (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Image URL"
+                        value={tempImageUrl}
+                        onChange={(e) => setTempImageUrl(e.target.value)}
+                        disabled={isView}
+                        className={styles.urlInput}
+                      />
+                      <button
+                        type="button"
+                        onClick={addImage}
+                        className={styles.addVariantBtn}
+                      >
+                        + Add
+                      </button>
+                    </>
+                  )}
+                </div>
+              </>
             )}
+
+            <div className={styles.imagePreviewList}>
+              {form.images.map((img, index) => (
+                <div className={styles.imagePreview} key={index}>
+                  <img src={img.url} alt={`img-${index}`} />
+                  <span className={styles.primaryBadge}>
+                    {img.isPrimary ? "Primary" : ""}
+                  </span>
+                  {!isView && (
+                    <div className={styles.imageActions}>
+                      {!img.isPrimary && (
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryImage(index)}
+                          className={styles.makePrimaryBtn}
+                        >
+                          Make Primary
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className={styles.removeImageBtn}
+                      >
+                        <MdDeleteForever />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Basic Info Fields */}
           <div className={styles.grid}>
             {["name", "brand", "category", "subCategory", "gender", "price"].map((field) => (
               <div key={field}>
@@ -201,13 +270,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   value={(form as any)[field]}
                   onChange={handleChange}
                   disabled={isView}
-                  required={field === "name" || field === "brand" || field === "price"}
+                  required={["name", "brand", "price"].includes(field)}
                 />
               </div>
             ))}
           </div>
 
-          {/* Description */}
           <div>
             <label className={styles.label}>Description</label>
             <textarea
@@ -216,10 +284,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
               onChange={handleChange}
               disabled={isView}
               required
-            ></textarea>
+            />
           </div>
 
-          {/* Variants */}
           <div className={styles.variantSection}>
             <label className={styles.label}>Variants</label>
             {form.variants.map((variant, index) => (
@@ -228,9 +295,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   type="text"
                   placeholder="Size"
                   value={variant.size}
-                  onChange={(e) =>
-                    handleVariantChange(index, "size", e.target.value)
-                  }
+                  onChange={(e) => handleVariantChange(index, "size", e.target.value)}
                   disabled={isView}
                   required
                 />
@@ -238,9 +303,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   type="text"
                   placeholder="Color"
                   value={variant.color}
-                  onChange={(e) =>
-                    handleVariantChange(index, "color", e.target.value)
-                  }
+                  onChange={(e) => handleVariantChange(index, "color", e.target.value)}
                   disabled={isView}
                   required
                 />
@@ -248,17 +311,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
                   type="number"
                   placeholder="Stock"
                   value={variant.stock}
-                  onChange={(e) =>
-                    handleVariantChange(index, "stock", e.target.value)
-                  }
+                  onChange={(e) => handleVariantChange(index, "stock", e.target.value)}
                   disabled={isView}
                   required
                 />
                 {!isView && form.variants.length > 1 && (
                   <button
                     type="button"
-                    className={styles.removeBtn}
                     onClick={() => removeVariant(index)}
+                    className={styles.removeBtn}
                   >
                     ×
                   </button>
@@ -266,23 +327,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
               </div>
             ))}
             {!isView && (
-              <button
-                type="button"
-                className={styles.addVariantBtn}
-                onClick={addVariant}
-              >
+              <button type="button" onClick={addVariant} className={styles.addVariantBtn}>
                 + Add Variant
               </button>
             )}
           </div>
 
-          {/* Form Actions */}
           <div className={styles.actions}>
-            <button
-              type="button"
-              onClick={onClose}
-              className={styles.cancelBtn}
-            >
+            <button type="button" onClick={onClose} className={styles.cancelBtn}>
               Cancel
             </button>
             {!isView && (

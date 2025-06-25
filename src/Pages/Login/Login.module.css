@@ -96,7 +96,6 @@
   text-align: center;
 }
 
-/* Responsive for small screens */
 @media (max-width: 480px) {
   .loginForm {
     padding: 1.5rem;

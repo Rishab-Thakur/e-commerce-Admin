@@ -66,19 +66,17 @@ export const unblockUser = createAsyncThunk<UserData, string>(
   }
 );
 
-export const searchUsers = createAsyncThunk<SearchUsersResponse, SearchUsersRequest>(
-  "users/search",
-  async (params, thunkAPI) => {
-    try {
-      const res = await UsersAPI.search(params);
-      return res.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue("Failed to search users.");
-    }
+export const searchUsers = createAsyncThunk<
+  SearchUsersResponse,
+  SearchUsersRequest
+>("users/search", async (params, thunkAPI) => {
+  try {
+    const res = await UsersAPI.search(params);
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue("Failed to search users.");
   }
-);
-
-
+});
 
 const userSlice = createSlice({
   name: "users",
@@ -145,7 +143,7 @@ const userSlice = createSlice({
       .addCase(searchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      })
+      });
   },
 });
 

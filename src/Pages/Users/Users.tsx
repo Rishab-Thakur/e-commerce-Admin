@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./Users.module.css";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../Redux/Store";
@@ -19,14 +19,13 @@ const Users: React.FC = () => {
     (state: RootState) => state.users, shallowEqual
   );
 
-  const totalPage = useMemo(() => Math.ceil(totalPages / (page || 1)), [totalPages, page]);
-
   const [currentPage, setCurrentPage] = useState(page || 1);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     dispatch(fetchUsers({ page: currentPage }));
   }, [dispatch, currentPage]);
+
 
   const refreshUsers = useCallback(() => {
     if (searchQuery) {
@@ -127,44 +126,50 @@ const Users: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user: UserData) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone}</td>
-                    <td>
-                      <span
-                        className={`${styles.statusBadge} ${styles[user.status]}`}
-                      >
-                        {user.status}
-                      </span>
-                    </td>
-                    <td>
-                      {user.status === "block" ? (
-                        <button
-                          className={styles.unblock}
-                          onClick={() => handleUnblock(user.id)}
+                {users.length ? (
+                  users.map((user: UserData) => (
+                    <tr key={user.id}>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.phone}</td>
+                      <td>
+                        <span
+                          className={`${styles.statusBadge} ${styles[user.status]}`}
                         >
-                          Unblock
-                        </button>
-                      ) : (
-                        <button
-                          className={styles.blocked}
-                          onClick={() => handleBlock(user.id)}
-                        >
-                          Block
-                        </button>
-                      )}
-                    </td>
+                          {user.status}
+                        </span>
+                      </td>
+                      <td>
+                        {user.status === "block" ? (
+                          <button
+                            className={styles.unblock}
+                            onClick={() => handleUnblock(user.id)}
+                          >
+                            Unblock
+                          </button>
+                        ) : (
+                          <button
+                            className={styles.blocked}
+                            onClick={() => handleBlock(user.id)}
+                          >
+                            Block
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className={styles.error}>No users found.</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
 
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPage}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
           />
         </>

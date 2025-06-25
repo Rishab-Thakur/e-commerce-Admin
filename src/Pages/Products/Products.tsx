@@ -44,18 +44,6 @@ const Products: React.FC = () => {
     setShowDeleteModal(true);
   }, []);
 
-  const handleDelete = useCallback(async () => {
-    if (productIdToDelete) {
-      await dispatch(deleteProduct(productIdToDelete));
-      setShowDeleteModal(false);
-      setProductIdToDelete(null);
-    }
-  }, [dispatch, productIdToDelete]);
-
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-  }, []);
-
   const refreshProducts = useCallback(() => {
     if (searchQuery) {
       dispatch(fetchProducts({ name: searchQuery }));
@@ -63,6 +51,21 @@ const Products: React.FC = () => {
       dispatch(fetchProducts({ page: currentPage }));
     }
   }, [dispatch, searchQuery, currentPage]);
+
+  const handleDelete = useCallback(async () => {
+    if (productIdToDelete) {
+      await dispatch(deleteProduct(productIdToDelete));
+      setShowDeleteModal(false);
+      setProductIdToDelete(null);
+      refreshProducts();
+    }
+  }, [dispatch, refreshProducts, productIdToDelete]);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+  }, []);
+
+
 
   const handleSearchClick = useCallback(() => {
     setCurrentPage(1);
@@ -119,7 +122,7 @@ const Products: React.FC = () => {
             </thead>
             <tbody>
               {products?.map((product: ProductData) => (
-                <tr key={product.id}>
+                <tr key={product._id}>
                   <td>{product.name}</td>
                   <td>{product.brand}</td>
                   <td>₹{product.price}</td>
@@ -139,7 +142,7 @@ const Products: React.FC = () => {
                     </button>
                     <button
                       className={styles.deleteBtn}
-                      onClick={() => confirmDelete(product.id)}
+                      onClick={() => confirmDelete(product._id)}
                     >
                       Delete
                     </button>

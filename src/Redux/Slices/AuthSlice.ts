@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AuthAPI } from "../../API/AuthAPI";
 import type {
   LoginRequest,
-  // LogoutRequest,
 } from "../../Interface/AuthServiceInterfaces";
 import type { RootState } from "../Store";
 

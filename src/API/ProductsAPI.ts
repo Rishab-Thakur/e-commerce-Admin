@@ -1,9 +1,10 @@
-import {api} from "./Index"; 
+import { api } from "./Index";
 import type {
   CreateProductRequest,
   UpdateProductRequest,
   ProductFilter,
   UpdateInventoryRequest,
+  Response,
 } from "../Interface/ProductServiceInterfaces";
 
 export const ProductAPI = {
@@ -13,14 +14,12 @@ export const ProductAPI = {
   updateProduct: (data: UpdateProductRequest) =>
     api.patch(`/products/${data.id}`, data),
 
-  getProduct: (id: string) =>
-    api.get(`/products/${id}`),
+  getProduct: (id: string) => api.get(`/products/${id}`),
 
   listProducts: (filters: ProductFilter) =>
-    api.get("/products", { params: filters }),
+    api.get<Response>("/products", { params: filters }),
 
-  deleteProduct: (id: string) =>
-    api.delete(`/products/${id}`),
+  deleteProduct: (id: string) => api.delete(`/products/${id}`),
 
   updateInventory: (data: UpdateInventoryRequest) =>
     api.put(`/products/${data.productId}/inventory`, data),

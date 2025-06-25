@@ -74,37 +74,82 @@ h2 {
   color: #004d40;
 }
 
+.imagePreviewList {
+  /* display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem; */
+  /* justify-content: center;
+  align-items: center;
+  flex: 1; */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
 .imagePreview {
   position: relative;
-  max-width: 200px;
-  border-radius: 8px;
-  overflow: hidden;
+  /* width: 160px; */
+  height: auto;
 }
 
 .imagePreview img {
   width: 100%;
   border-radius: 8px;
   border: 1px solid #ccc;
+  display: block;
+  height: 300px;
+  object-fit: cover;
+}
+
+.imageActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.makePrimaryBtn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.makePrimaryBtn:hover {
+  background-color: #e68900;
+}
+
+.primaryBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #004d40;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 1;
 }
 
 .removeImageBtn {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #f51809;
+  background-color: #f51809;
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  font-size: 18px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.2rem;
 }
 
@@ -125,6 +170,7 @@ textarea {
   min-height: 100px;
 }
 
+/* Variant styles */
 .variantSection {
   padding: 1rem;
   background-color: #f8f8f8;
@@ -169,6 +215,7 @@ textarea {
   cursor: pointer;
 }
 
+/* Actions */
 .actions {
   display: flex;
   justify-content: flex-end;

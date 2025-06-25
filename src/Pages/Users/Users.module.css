@@ -137,7 +137,7 @@
 }
 
 .active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -147,12 +147,12 @@
 }
 
 .block {
-  background-color: #F44336;
+  background-color: #f44336;
   color: white;
 }
 
 .blocked {
-  background-color: #F44336;
+  background-color: #f44336;
   color: white;
   border: none;
   padding: 0.4rem 0.8rem;
@@ -167,7 +167,7 @@
 }
 
 .unblock {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   padding: 0.4rem 0.8rem;

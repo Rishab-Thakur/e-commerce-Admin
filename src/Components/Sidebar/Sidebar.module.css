@@ -1,6 +1,7 @@
 .sidebar {
   width: 240px;
   background-color: #00332c;
+  /* background-color: #044236; */
   height: 100vh;
   padding: 2rem 1rem;
   position: fixed;
@@ -61,9 +62,9 @@
   cursor: pointer;
 }
 
-  .closeButtonWrapper {
-    display: flex;
-  }
+.closeButtonWrapper {
+  display: flex;
+}
 
 @media (max-width: 768px) {
   .sidebar {
@@ -80,4 +81,3 @@
     gap: 1rem;
   }
 }
-
