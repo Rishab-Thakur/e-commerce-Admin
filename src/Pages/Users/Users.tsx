@@ -11,6 +11,7 @@ import useDebounce from "../../Hooks/UseDebounce/UseDebounce";
 import ActionModal from "../../Modals/ActionModal/ActionModal";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { UsersAPI } from "../../API/UsersAPI";
+import { USER_STATUS } from "../../Constants/Enum";
 
 const Users: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -155,7 +156,7 @@ const Users: React.FC = () => {
                       <td>
                         <ActionModal
                           actions={[
-                            user.status === "block"
+                            user.status === USER_STATUS.BLOCKED
                               ? {
                                 label: "Unblock",
                                 icon: <ShieldCheck size={16} />,

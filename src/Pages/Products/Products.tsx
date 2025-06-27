@@ -11,6 +11,7 @@ import type { ProductData } from "../../Interface/ProductServiceInterfaces";
 import useDebounce from "../../Hooks/UseDebounce/UseDebounce";
 import ActionModal from "../../Modals/ActionModal/ActionModal";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import type { FormModeType } from "../../Constants/Enum";
 
 
 const Products: React.FC = () => {
@@ -21,7 +22,7 @@ const Products: React.FC = () => {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [modalType, setModalType] = useState<"add" | "edit" | "view" | null>(null);
+  const [modalType, setModalType] = useState<FormModeType | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
@@ -42,7 +43,7 @@ const Products: React.FC = () => {
     loadProducts();
   }, [loadProducts]);
 
-  const openModal = useCallback((type: "add" | "edit" | "view", product?: ProductData) => {
+  const openModal = useCallback((type: FormModeType, product?: ProductData) => {
     setSelectedProduct(product || null);
     setModalType(type);
   }, []);

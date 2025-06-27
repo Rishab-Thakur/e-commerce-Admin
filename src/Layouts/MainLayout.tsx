@@ -45,7 +45,10 @@ const MainLayout: React.FC = () => {
         className={`${styles.contentArea} ${isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
           }`}
       >
-        <Header onToggleSidebar={toggleSidebar} isOpen={isSidebarOpen} />
+        <Header
+          onToggleSidebar={toggleSidebar}
+          isOpen={isSidebarOpen} />
+
         <main className={styles.main}>
           <Outlet />
         </main>
