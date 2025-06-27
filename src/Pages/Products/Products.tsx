@@ -100,7 +100,7 @@ const Products: React.FC = () => {
       ) : error ? (
         <p className={styles.error}>{error}</p>
       ) : products.length === 0 ? (
-        <p className={styles.noData}>No products found.</p>
+        <p className={styles.error}>No products found.</p>
       ) : (
         <>
           <table className={styles.productTable}>

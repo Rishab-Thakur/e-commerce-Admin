@@ -173,7 +173,7 @@ const Users: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className={styles.error}>No users found.</td>
+                    <td colSpan={6} className={styles.error} style={{ textAlign: "center" }}>No users found.</td>
                   </tr>
                 )}
               </tbody>
