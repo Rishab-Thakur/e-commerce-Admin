@@ -75,13 +75,6 @@ h2 {
 }
 
 .imagePreviewList {
-  /* display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem; */
-  /* justify-content: center;
-  align-items: center;
-  flex: 1; */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.2rem;
@@ -215,7 +208,6 @@ textarea {
   cursor: pointer;
 }
 
-/* Actions */
 .actions {
   display: flex;
   justify-content: flex-end;

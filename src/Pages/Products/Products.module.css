@@ -65,51 +65,6 @@
   margin-bottom: 0.3rem;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.viewBtn,
-.editBtn,
-.deleteBtn {
-  padding: 0.4rem 0.9rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.viewBtn {
-  background-color: #4caf50;
-  color: white;
-}
-
-.editBtn {
-  background-color: #2196f3;
-  color: white;
-}
-
-.deleteBtn {
-  background-color: #f44336;
-  color: white;
-}
-
-.viewBtn:hover {
-  background-color: #43a047;
-}
-
-.editBtn:hover {
-  background-color: #1e88e5;
-}
-
-.deleteBtn:hover {
-  background-color: #e53935;
-}
-
 .error {
   color: #c62828;
   background-color: #ffebee;
@@ -175,12 +130,16 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  justify-content: space-between;
   flex-wrap: wrap;
+  flex-direction: row-reverse;
 }
 
 .searchInput {
   flex: 1;
   min-width: 250px;
+  max-width: 400px;
+  height: 40px;
   padding: 0.6rem 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -192,19 +151,4 @@
 .searchInput:focus {
   border-color: #004d40;
   box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.15);
-}
-
-.searchButton {
-  padding: 0.6rem 1.5rem;
-  background-color: #004d40;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.searchButton:hover {
-  background-color: #00695c;
 }

@@ -24,7 +24,7 @@ export interface ProductImage {
 }
 
 export interface UpdateProductRequest {
-  _id: string;
+  id: string;
   name?: string;
   category?: string;
   subCategory?: string;

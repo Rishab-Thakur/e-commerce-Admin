@@ -4,11 +4,13 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Times New Roman", sans-serif;
   font-size: 16px;
   font-weight: 400;
   color: #212121;
@@ -18,7 +20,7 @@ html, body, #root {
 }
 
 a {
-  color: #004d40; 
+  color: #004d40;
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -37,12 +39,18 @@ button {
   padding: 0;
 }
 
-ul, ol {
+ul,
+ol {
   margin: 0;
   padding-left: 1.5rem;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 700;
   color: #00332c;
@@ -58,7 +66,9 @@ img {
   display: block;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
   padding: 8px;
@@ -67,7 +77,9 @@ input, select, textarea {
   transition: border-color 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: #004d40;
   outline: none;
 }
@@ -90,13 +102,12 @@ input:focus, select:focus, textarea:focus {
 
 .visually-hidden {
   position: absolute !important;
-  height: 1px; 
-  width: 1px; 
+  height: 1px;
+  width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap; 
+  white-space: nowrap;
 }
-
 
 @media (max-width: 600px) {
   html {

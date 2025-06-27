@@ -4,6 +4,8 @@ import OrderDetailsModal from "../../Modals/OrderDetails/OrderDetailsModal";
 import OrderStatusModal from "../../Modals/OrderStatus/OrderStatusModal";
 import Pagination from "../../Components/Pagination/Pagination";
 import Loader from "../../Components/Loader/Loader";
+import ActionModal from "../../Modals/ActionModal/ActionModal";
+import { Eye, RefreshCcw } from "lucide-react";
 
 const dummyOrders = [
   {
@@ -90,19 +92,21 @@ const Orders: React.FC = () => {
                   <td>{order.status}</td>
                   <td>{order.date}</td>
                   <td>{order.items}</td>
-                  <td className={styles.actions}>
-                    <button
-                      className={styles.view}
-                      onClick={() => setSelectedOrder(order)}
-                    >
-                      View
-                    </button>
-                    <button
-                      className={styles.update}
-                      onClick={() => setStatusModalOrderId(order.id)}
-                    >
-                      Update Status
-                    </button>
+                  <td>
+                    <ActionModal
+                      actions={[
+                        {
+                          label: "View",
+                          icon: <Eye size={16} />,
+                          onClick: () => setSelectedOrder(order),
+                        },
+                        {
+                          label: "Update Status",
+                          icon: <RefreshCcw size={16} />,
+                          onClick: () => setStatusModalOrderId(order.id),
+                        },
+                      ]}
+                    />
                   </td>
                 </tr>
               ))}
