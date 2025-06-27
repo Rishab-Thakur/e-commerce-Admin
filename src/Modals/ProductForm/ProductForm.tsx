@@ -10,9 +10,10 @@ import type {
   ProductImage,
 } from "../../Interface/ProductServiceInterfaces";
 import { toast } from "react-toastify";
+import { FORM_MODE, type FormModeType } from "../../Constants/Enum";
 
 interface ProductFormProps {
-  mode: "add" | "edit" | "view";
+  mode: FormModeType;
   product?: ProductData | null;
   onClose: () => void;
   onSuccess: () => void;
@@ -22,7 +23,7 @@ const defaultVariant: Variant = { size: "", color: "", stock: 0 };
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuccess }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const isView = mode === "view";
+  const isView = mode === FORM_MODE.VIEW;
 
   const [form, setForm] = useState({
     name: "",
@@ -41,7 +42,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuc
 
   // Load product data if editing or viewing
   useEffect(() => {
-    if (product && (mode === "edit" || mode === "view")) {
+    if (product && (mode === FORM_MODE.EDIT || mode === FORM_MODE.VIEW)) {
       setForm({
         name: product.name,
         category: product.category || "",
@@ -155,11 +156,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuc
       };
 
       try {
-        if (mode === "add") {
+        if (mode === FORM_MODE.ADD) {
           await dispatch(createProduct(payload)).unwrap();
           toast.success("Product added successfully!");
           onSuccess();
-        } else if (mode === "edit" && product?._id) {
+        } else if (mode === FORM_MODE.EDIT && product?._id) {
           await dispatch(updateProduct({ id: product._id, ...payload })).unwrap();
           toast.success("Product updated successfully!");
         }
@@ -174,8 +175,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuc
   );
 
   const formTitle = useMemo(() => {
-    if (mode === "add") return "Add Product";
-    if (mode === "edit") return "Edit Product";
+    if (mode === FORM_MODE.ADD) return "Add Product";
+    if (mode === FORM_MODE.EDIT) return "Edit Product";
     return "View Product";
   }, [mode]);
 
@@ -343,7 +344,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuc
             </button>
             {!isView && (
               <button type="submit" className={styles.submitBtn}>
-                {mode === "add" ? "Add" : "Update"}
+                {mode === FORM_MODE.ADD ? "Add" : "Update"}
               </button>
             )}
           </div>
