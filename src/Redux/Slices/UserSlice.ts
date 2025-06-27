@@ -137,7 +137,7 @@ const userSlice = createSlice({
       })
       .addCase(searchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload.users;
+        state.users = action.payload.users || [];
         state.total = action.payload.total;
       })
       .addCase(searchUsers.rejected, (state, action) => {

@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../Redux/Store";
 import { v4 as uuidv4 } from "uuid";
 import { ROUTES } from "../../Constants/Routes";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("bansalakshit0460@gmail.com");
   const [password, setPassword] = useState("123456789");
   const [deviceId, setDeviceId] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -32,12 +34,12 @@ const Login: React.FC = () => {
   const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     dispatch(clearError());
-  }, []);
+  }, [dispatch]);
 
   const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     dispatch(clearError());
-  }, []);
+  }, [dispatch]);
 
   const handleLogin = useCallback(
     async (e: React.FormEvent) => {
@@ -69,14 +71,24 @@ const Login: React.FC = () => {
 
         <div className={styles.formGroup}>
           <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="********"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
+          <div className={styles.passwordWrapper}>
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="********"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+            <button
+              type="button"
+              className={styles.togglePassword}
+              onClick={() => setShowPassword((prev) => !prev)}
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         {error && <p className={styles.error}>{error}</p>}

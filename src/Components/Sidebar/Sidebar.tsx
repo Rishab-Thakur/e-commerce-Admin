@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import {
   MdDashboard,
@@ -9,26 +9,16 @@ import {
   MdClose,
   MdLogout,
 } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../Redux/Store";
-import { logoutUser } from "../../Redux/Slices/AuthSlice";
 import { ROUTES } from "../../Constants/Routes";
 import { IoMdKey } from "react-icons/io";
 
 export interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onLogoutClick: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  const handleLogout = useCallback(async () => {
-    await dispatch(logoutUser());
-    navigate(ROUTES.LOGIN);
-  }, [dispatch, navigate]);
-
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onLogoutClick }) => {
   return (
     <aside className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}>
       <div className={styles.closeButtonWrapper}>
@@ -86,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           Change Password
         </NavLink>
 
-        <button onClick={handleLogout} className={styles.link}>
+        <button onClick={onLogoutClick} className={styles.link}>
           <MdLogout className={styles.icon} />
           Logout
         </button>

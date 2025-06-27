@@ -1,33 +1,46 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import styles from "./Products.module.css";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import type { AppDispatch, RootState } from "../../Redux/Store";
-import {
-  fetchProducts,
-  deleteProduct,
-} from "../../Redux/Slices/ProductSlice";
+import { fetchProducts, deleteProduct } from "../../Redux/Slices/ProductSlice";
 import Loader from "../../Components/Loader/Loader";
 import Pagination from "../../Components/Pagination/Pagination";
 import ProductForm from "../../Modals/ProductForm/ProductForm";
 import DeleteConfirmModal from "../../Modals/Confirm/DeleteConfirm";
 import type { ProductData } from "../../Interface/ProductServiceInterfaces";
+import useDebounce from "../../Hooks/UseDebounce/UseDebounce";
+import ActionModal from "../../Modals/ActionModal/ActionModal";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+
 
 const Products: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { products, loading, error, total, page, pageSize } = useSelector(
-    (state: RootState) => state.products, shallowEqual
+  const { products, loading, error, total, pageSize } = useSelector(
+    (state: RootState) => state.products,
+    shallowEqual
   );
 
-  const [currentPage, setCurrentPage] = useState<number>(page || 1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [modalType, setModalType] = useState<"add" | "edit" | "view" | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+
+  const loadProducts = useCallback(() => {
+    const isSearching = !!debouncedSearchQuery.trim();
+    const params = isSearching
+      ? { name: debouncedSearchQuery.trim() }
+      : { page: currentPage };
+
+    dispatch(fetchProducts(params));
+  }, [dispatch, debouncedSearchQuery, currentPage]);
 
   useEffect(() => {
-    dispatch(fetchProducts({ page: currentPage }));
-  }, [dispatch, currentPage]);
+    loadProducts();
+  }, [loadProducts]);
 
   const openModal = useCallback((type: "add" | "edit" | "view", product?: ProductData) => {
     setSelectedProduct(product || null);
@@ -44,63 +57,41 @@ const Products: React.FC = () => {
     setShowDeleteModal(true);
   }, []);
 
-  const refreshProducts = useCallback(() => {
-    if (searchQuery) {
-      dispatch(fetchProducts({ name: searchQuery }));
-    } else {
-      dispatch(fetchProducts({ page: currentPage }));
-    }
-  }, [dispatch, searchQuery, currentPage]);
-
   const handleDelete = useCallback(async () => {
     if (productIdToDelete) {
       await dispatch(deleteProduct(productIdToDelete));
       setShowDeleteModal(false);
       setProductIdToDelete(null);
-      refreshProducts();
+      loadProducts();
     }
-  }, [dispatch, refreshProducts, productIdToDelete]);
+  }, [dispatch, productIdToDelete, loadProducts]);
 
   const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
   }, []);
 
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(total / (pageSize || 1))),
+    [total, pageSize]
+  );
 
-
-  const handleSearchClick = useCallback(() => {
-    setCurrentPage(1);
-    refreshProducts();
-  }, [refreshProducts]);
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    if (value.trim() === "") {
-      dispatch(fetchProducts({ page: 1 }));
-    }
-  }, []);
-
-  const totalPages = useMemo(() => Math.ceil(total / (pageSize || 1)), [total, pageSize]);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>Product Management</h2>
-        <button className={styles.addButton} onClick={() => openModal("add")}>
-          + Add Product
-        </button>
       </div>
 
       <div className={styles.controls}>
         <input
           type="text"
-          placeholder="Search by Product Name"
+          placeholder="Search by Product Name, Brand"
           value={searchQuery}
-          onChange={handleSearchChange}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className={styles.searchInput}
         />
-        <button onClick={handleSearchClick} className={styles.searchButton}>
-          Search
+        <button className={styles.addButton} onClick={() => openModal("add")}>
+          + Add Product
         </button>
       </div>
 
@@ -108,6 +99,8 @@ const Products: React.FC = () => {
         <Loader text="Loading Products..." />
       ) : error ? (
         <p className={styles.error}>{error}</p>
+      ) : products.length === 0 ? (
+        <p className={styles.noData}>No products found.</p>
       ) : (
         <>
           <table className={styles.productTable}>
@@ -116,37 +109,41 @@ const Products: React.FC = () => {
                 <th>Name</th>
                 <th>Brand</th>
                 <th>Price</th>
+                <th>Variants</th>
                 <th>Stock</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {products?.map((product: ProductData) => (
+              {products.map((product: ProductData) => (
                 <tr key={product._id}>
                   <td>{product.name}</td>
                   <td>{product.brand}</td>
                   <td>₹{product.price}</td>
+                  <td style={{ paddingLeft: "2rem" }}>{product.variants.length}</td>
                   <td>{product.totalStock}</td>
                   <td className={styles.actions}>
-                    <button
-                      className={styles.viewBtn}
-                      onClick={() => openModal("view", product)}
-                    >
-                      View
-                    </button>
-                    <button
-                      className={styles.editBtn}
-                      onClick={() => openModal("edit", product)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={() => confirmDelete(product._id)}
-                    >
-                      Delete
-                    </button>
+                    <ActionModal
+                      actions={[
+                        {
+                          label: "View",
+                          icon: <Eye size={16} />,
+                          onClick: () => openModal("view", product),
+                        },
+                        {
+                          label: "Edit",
+                          icon: <Pencil size={16} />,
+                          onClick: () => openModal("edit", product),
+                        },
+                        {
+                          label: "Delete",
+                          icon: <Trash2 size={16} />,
+                          onClick: () => confirmDelete(product._id),
+                        },
+                      ]}
+                    />
                   </td>
+
                 </tr>
               ))}
             </tbody>
@@ -165,6 +162,8 @@ const Products: React.FC = () => {
           mode={modalType}
           product={selectedProduct}
           onClose={closeModal}
+          onSuccess={() => setCurrentPage(1)}
+
         />
       )}
 

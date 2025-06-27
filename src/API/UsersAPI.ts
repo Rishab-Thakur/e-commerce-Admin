@@ -15,9 +15,9 @@ export const UsersAPI = {
   search: (params: SearchUsersRequest) =>
     api.get<SearchUsersResponse>("/users/search", { params }),
 
-  block: (id: string) =>
-    api.put<BlockUserResponse>(`/users/block/${id}`),
+  block: (id: string) => api.put<BlockUserResponse>(`/users/block/${id}`),
 
-  unblock: (id: string) =>
-    api.put<UnblockUserResponse>(`/users/unblock/${id}`),
+  unblock: (id: string) => api.put<UnblockUserResponse>(`/users/unblock/${id}`),
+
+  download: () => api.get("/users/all"),
 };

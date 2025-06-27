@@ -15,11 +15,12 @@ interface ProductFormProps {
   mode: "add" | "edit" | "view";
   product?: ProductData | null;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 const defaultVariant: Variant = { size: "", color: "", stock: 0 };
 
-const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => {
+const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose, onSuccess }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isView = mode === "view";
 
@@ -35,7 +36,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
     images: [] as ProductImage[],
   });
 
-  const [imageType, setImageType] = useState<"file" | "url">("file");
+  const [imageType, setImageType] = useState<"file" | "url">("url");
   const [tempImageUrl, setTempImageUrl] = useState("");
 
   // Load product data if editing or viewing
@@ -157,13 +158,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, product, onClose }) => 
         if (mode === "add") {
           await dispatch(createProduct(payload)).unwrap();
           toast.success("Product added successfully!");
+          onSuccess();
         } else if (mode === "edit" && product?._id) {
-          await dispatch(updateProduct({ _id: product._id, ...payload })).unwrap();
+          await dispatch(updateProduct({ id: product._id, ...payload })).unwrap();
           toast.success("Product updated successfully!");
         }
         onClose();
       } catch {
         toast.error("Something went wrong. Please try again.");
+      } finally {
+
       }
     },
     [dispatch, form, isView, mode, onClose, product?._id]
